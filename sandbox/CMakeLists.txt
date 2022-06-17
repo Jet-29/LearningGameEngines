@@ -6,9 +6,11 @@ include(SourceList.cmake)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 set(Includes
-        ${PROJECT_SOURCE_DIR}/src
         ${CMAKE_SOURCE_DIR}/engine/src
+        ${CMAKE_SOURCE_DIR}/engine/vendor/spdlog/include
         )
+
+add_dependencies(${PROJECT_NAME} engine)
 
 set(Libraries ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/engine.lib)
 
