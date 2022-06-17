@@ -5,6 +5,8 @@
 #include "engine/Layer.h"
 #include "engine/Log.h"
 
+#include "engine/ImGui/ImGuiLayer.h"
+
 // --- Entry Point ---
 #include "engine/EntryPoint.h"
 // -------------------
