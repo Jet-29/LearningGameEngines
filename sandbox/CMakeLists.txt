@@ -9,7 +9,7 @@ set(Includes
         ${CMAKE_SOURCE_DIR}/engine/src
         ${CMAKE_SOURCE_DIR}/engine/vendor/spdlog/include
         ${CMAKE_SOURCE_DIR}/engine/vendor/imgui
-        ${PROJECT_SOURCE_DIR}/vendor/glm/include
+        ${CMAKE_SOURCE_DIR}/engine/vendor/glm
         )
 
 add_dependencies(${PROJECT_NAME} engine)

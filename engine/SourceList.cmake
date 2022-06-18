@@ -14,3 +14,11 @@ set(SOURCE_FILES
 set(PrecompiledHeaders
         "src/EnginePch.h"
         )
+
+set(IMGUI_SOURCE_FILES
+        "vendor/imgui/imgui.cpp"
+        "vendor/imgui/imgui_draw.cpp"
+        "vendor/imgui/imgui_widgets.cpp"
+        "vendor/imgui/imgui_tables.cpp"
+        "vendor/imgui/imgui_demo.cpp"
+        )
