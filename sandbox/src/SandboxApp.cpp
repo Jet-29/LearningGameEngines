@@ -2,30 +2,33 @@
 
 class ExampleLayer : public Engine::Layer {
 public:
-	ExampleLayer() : Layer("Example") {}
+    ExampleLayer() : Layer("Example") {}
 
-	void OnUpdate() override {
-		ENGINE_TRACE("ExampleLayer::OnUpdate");
-	}
+    void OnUpdate() override {
+//		ENGINE_TRACE("ExampleLayer::OnUpdate");
+    }
 
-	void OnEvent(Engine::Event &event) override {
-		ENGINE_INFO("{0}", event);
-	}
+    void OnEvent(Engine::Event &event) override {
+        if (event.GetEventType() == Engine::EventType::MouseMoved) {
+            return;
+        }
+        ENGINE_INFO("{0}", event);
+    }
 };
 
 class Sandbox : public Engine::Application {
 public:
-	Sandbox() {
-		PushLayer(new ExampleLayer());
-		PushOverlay(new Engine::ImGuiLayer());
-	}
+    Sandbox() {
+        PushLayer(new ExampleLayer());
+        PushOverlay(new Engine::ImGuiLayer());
+    }
 
-	~Sandbox() {
+    ~Sandbox() {
 
-	}
+    }
 
 };
 
 Engine::Application *Engine::CreateApplication() {
-	return new Sandbox();
+    return new Sandbox();
 }

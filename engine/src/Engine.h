@@ -1,12 +1,20 @@
 #pragma once
 
 // For external use
-#include "engine/Application.h"
-#include "engine/Layer.h"
-#include "engine/Log.h"
 
-#include "engine/ImGui/ImGuiLayer.h"
+#include "Engine/Core/Base.h"
+
+#include "Engine/Core/Application.h"
+#include "Engine/Core/Layer.h"
+#include "Engine/Core/Log.h"
+#include "Engine/Core/Assert.h"
+
+#include "Engine/Core/Input.h"
+#include "Engine/Core/KeyCodes.h"
+#include "Engine/Core/MouseCodes.h"
+
+#include "Engine/ImGui/ImGuiLayer.h"
 
 // --- Entry Point ---
-#include "engine/EntryPoint.h"
+#include "Engine/Core/EntryPoint.h"
 // -------------------

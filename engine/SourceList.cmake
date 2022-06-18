@@ -1,13 +1,16 @@
 set(SOURCE_FILES
-        "src/engine/Application.cpp"
-        "src/engine/Log.cpp"
-        "src/engine/Platforms/Windows/WindowsWindow.cpp"
-        "src/engine/Layer.cpp"
-        "src/engine/LayerStack.cpp"
-        "src/engine/ImGui/ImGuiLayer.cpp"
-        "src/engine/Platforms/OpenGL/ImGuiOpenGLRenderer.cpp"
+        "src/EnginePch.cpp"
+        "src/Engine/Core/Application.cpp"
+        "src/Engine/Core/Log.cpp"
+        "src/Platforms/Windows/WindowsWindow.cpp"
+        "src/Engine/Core/Layer.cpp"
+        "src/Engine/Core/LayerStack.cpp"
+        "src/Engine/ImGui/ImGuiLayer.cpp"
+        "src/Platforms/OpenGL/ImGuiOpenGLRenderer.cpp"
+        "src/Platforms/GLFW/ImGuiGLFWRenderer.cpp"
+        "src/Platforms/Windows/WindowsInput.cpp"
         )
 
 set(PrecompiledHeaders
-        "src/engine/EnginePch.h"
+        "src/EnginePch.h"
         )
