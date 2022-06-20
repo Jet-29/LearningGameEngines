@@ -21,7 +21,7 @@ namespace Engine {
 
         inline int GetRepeatCount() const { return m_RepeatCount; }
 
-        std::string ToString() const override {
+        virtual std::string ToString() const override {
             std::stringstream ss;
             ss << "KeyPressedEvent: " << m_KeyCode << " (" << m_RepeatCount << " repeats)";
             return ss.str();
@@ -37,7 +37,7 @@ namespace Engine {
     public:
         KeyReleasedEvent(int keycode) : KeyEvent(keycode) {}
 
-        std::string ToString() const override {
+        virtual std::string ToString() const override {
             std::stringstream ss;
             ss << "KeyReleasedEvent: " << m_KeyCode;
             return ss.str();
@@ -50,7 +50,7 @@ namespace Engine {
     public:
         KeyTypedEvent(int keycode) : KeyEvent(keycode) {}
 
-        std::string ToString() const override {
+        virtual std::string ToString() const override {
             std::stringstream ss;
             ss << "KeyTypedEvent: " << m_KeyCode;
             return ss.str();

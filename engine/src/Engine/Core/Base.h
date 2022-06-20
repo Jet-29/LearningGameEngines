@@ -1,7 +1,5 @@
 #pragma once
 
-#include "EnginePch.h"
-
 #ifdef ENGINE_PLATFORM_WINDOWS
     #define ENGINE_API
 #endif

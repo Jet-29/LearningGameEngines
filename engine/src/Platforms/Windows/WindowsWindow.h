@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine/Core/Window.h"
+#include "Engine/Renderer/GraphicsContext.h"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -10,25 +11,26 @@ namespace Engine {
     class WindowsWindow : public Window {
     public:
         WindowsWindow(const WindowProps &props);
-        ~WindowsWindow() override;
+        virtual ~WindowsWindow() override;
 
-        void OnUpdate() override;
+        virtual void OnUpdate() override;
 
-        inline unsigned int GetWidth() const override { return m_Data.Width; }
-        inline unsigned int GetHeight() const override { return m_Data.Height; }
+        virtual inline unsigned int GetWidth() const override { return m_Data.Width; }
+        virtual inline unsigned int GetHeight() const override { return m_Data.Height; }
 
         // Window attributes
-        inline void SetEventCallback(const EventCallbackFn &callback) override { m_Data.EventCallback = callback; }
-        void SetVSync(bool enabled) override;
-        bool IsVSync() const override;
+        virtual inline void SetEventCallback(const EventCallbackFn &callback) override { m_Data.EventCallback = callback; }
+        virtual void SetVSync(bool enabled) override;
+        virtual bool IsVSync() const override;
 
-        void *GetNativeWindow() const override { return m_Window; }
+        virtual void *GetNativeWindow() const override { return m_Window; }
 
     private:
         void Init(const WindowProps &props);
         void Shutdown();
 
         GLFWwindow *m_Window{};
+        GraphicsContext *m_Context;
 
         struct WindowData {
             std::string Title;

@@ -1,22 +1,27 @@
 #pragma once
 
 #include "Engine/Core/Layer.h"
-#include "engine/Events/MouseEvent.h"
-#include "engine/Events/KeyEvent.h"
-#include "engine/Events/ApplicationEvent.h"
+#include "Engine/Events/MouseEvent.h"
+#include "Engine/Events/KeyEvent.h"
+#include "Engine/Events/ApplicationEvent.h"
 
 namespace Engine {
 
     class ImGuiLayer : public Layer {
     public:
         ImGuiLayer();
-        ~ImGuiLayer() override;
+        virtual ~ImGuiLayer() override;
 
-        void OnAttach() override;
-        void OnDetach() override;
-        void OnUpdate() override;
-        void OnEvent(Event &event) override;
+        virtual void OnAttach() override;
+        virtual void OnDetach() override;
+        virtual void OnEvent(Event &event) override;
 
+        virtual void OnImGuiRender() override;
+
+        static void Begin();
+        static void End();
+
+        static void SetDarkThemeColors();
     private:
         float m_Time = 0.0f;
     };

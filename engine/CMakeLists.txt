@@ -3,7 +3,7 @@ project(engine CXX)
 
 include(SourceList.cmake)
 
-add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${IMGUI_SOURCE_FILES})
+add_library(${PROJECT_NAME} STATIC ${ALL_SOURCE_FILES})
 
 add_subdirectory(vendor/spdlog)
 
