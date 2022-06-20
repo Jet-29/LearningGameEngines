@@ -12,6 +12,7 @@ set(ENGINE_SOURCE_FILES
         "src/Engine/Renderer/Shader.cpp"
         "src/Engine/Renderer/Buffer.cpp"
         "src/Engine/Renderer/VertexArray.cpp"
+        "src/Engine/Renderer/OrthographicCamera.cpp"
         )
 
 Set(OPENGL_SOURCE_FILES

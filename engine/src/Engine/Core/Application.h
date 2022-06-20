@@ -2,14 +2,9 @@
 
 #include "Base.h"
 #include "Window.h"
-#include "Input.h"
 #include "Engine/Events/ApplicationEvent.h"
 #include "LayerStack.h"
 #include "Engine/ImGui/ImGuiLayer.h"
-
-#include "Engine/Renderer/Shader.h"
-#include "Engine/Renderer/Buffer.h"
-#include "Engine/Renderer/VertexArray.h"
 
 namespace Engine {
     class ENGINE_API Application {
@@ -34,12 +29,6 @@ namespace Engine {
         ImGuiLayer *m_ImGuiLayer;
         bool m_Running = true;
         LayerStack m_LayerStack;
-
-        std::shared_ptr<Shader> m_Shader;
-        std::shared_ptr<Shader> m_BlueShader;
-
-        std::shared_ptr<VertexArray> m_VertexArray;
-        std::shared_ptr<VertexArray> m_SquareVA;
 
         static Application *s_Instance;
     };
