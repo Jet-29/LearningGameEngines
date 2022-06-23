@@ -5,6 +5,7 @@
 #include "Engine/Events/ApplicationEvent.h"
 #include "LayerStack.h"
 #include "Engine/ImGui/ImGuiLayer.h"
+#include "Engine/Core/TimeStep.h"
 
 namespace Engine {
     class ENGINE_API Application {
@@ -29,6 +30,7 @@ namespace Engine {
         ImGuiLayer *m_ImGuiLayer;
         bool m_Running = true;
         LayerStack m_LayerStack;
+        float m_LastFrameTime = 0.0f;
 
         static Application *s_Instance;
     };

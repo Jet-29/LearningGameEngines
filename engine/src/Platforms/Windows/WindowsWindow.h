@@ -22,6 +22,7 @@ namespace Engine {
         virtual inline void SetEventCallback(const EventCallbackFn &callback) override { m_Data.EventCallback = callback; }
         virtual void SetVSync(bool enabled) override;
         virtual bool IsVSync() const override;
+        virtual float GetTime() const override;
 
         virtual void *GetNativeWindow() const override { return m_Window; }
 

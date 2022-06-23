@@ -154,5 +154,8 @@ namespace Engine {
     void WindowsWindow::Shutdown() {
         glfwDestroyWindow(m_Window);
     }
+    float WindowsWindow::GetTime() const {
+        return glfwGetTime();
+    }
 
 } // Engine

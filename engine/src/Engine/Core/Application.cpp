@@ -29,9 +29,12 @@ namespace Engine {
     }
     void Application::Run() {
         while (m_Running) {
+            float time = m_Window->GetTime();
+            TimeStep timeStep = time - m_LastFrameTime;
+            m_LastFrameTime = time;
 
             for (Layer *layer : m_LayerStack) {
-                layer->OnUpdate();
+                layer->OnUpdate(timeStep);
             }
 
             Engine::ImGuiLayer::Begin();
