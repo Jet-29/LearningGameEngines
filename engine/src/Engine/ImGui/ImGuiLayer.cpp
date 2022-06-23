@@ -19,6 +19,8 @@ namespace Engine {
         ImGui::StyleColorsDark();
 
         ImGuiIO &io = ImGui::GetIO();
+        io.IniFilename = "uiConfig.ini"; // disable the settings file generation;
+
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
 //        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking

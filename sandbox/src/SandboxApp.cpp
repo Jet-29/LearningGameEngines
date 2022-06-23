@@ -8,7 +8,7 @@ public:
     ExampleLayer() : Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f) {}
     virtual void OnAttach() override {
         {
-            m_VertexArray.reset(Engine::VertexArray::Create());
+            m_VertexArray = Engine::VertexArray::Create();
 
             float vertices[3 * 7] = {
                 -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
@@ -18,8 +18,7 @@ public:
 
             uint32_t indices[3] = {0, 1, 2};
 
-            std::shared_ptr<Engine::VertexBuffer> vertexBuffer;
-            vertexBuffer.reset(Engine::VertexBuffer::Create(vertices, sizeof(vertices)));
+            Engine::Ref<Engine::VertexBuffer> vertexBuffer = Engine::VertexBuffer::Create(vertices, sizeof(vertices));
 
             vertexBuffer->SetLayout({
                                         {Engine::ShaderDataType::Float3, "a_Position"},
@@ -28,35 +27,33 @@ public:
 
             m_VertexArray->AddVertexBuffer(vertexBuffer);
 
-            std::shared_ptr<Engine::IndexBuffer> indexBuffer;
-            indexBuffer.reset(Engine::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+            Engine::Ref<Engine::IndexBuffer> indexBuffer = Engine::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
 
             m_VertexArray->SetIndexBuffer(indexBuffer);
 
         }
 
         {
-            m_SquareVA.reset(Engine::VertexArray::Create());
+            m_SquareVA = Engine::VertexArray::Create();
 
-            float squareVertices[3 * 4] = {
-                -0.5f, -0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f,
-                0.5f, 0.5f, 0.0f,
-                -0.5f, 0.5f, 0.0f
+            float squareVertices[5 * 4] = {
+                -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+                0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+                0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
+                -0.5f, 0.5f, 0.0f, 0.0f, 1.0f
             };
             uint32_t indices[6] = {0, 1, 2, 2, 3, 0};
 
-            std::shared_ptr<Engine::VertexBuffer> squareVB;
-            squareVB.reset(Engine::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+            Engine::Ref<Engine::VertexBuffer> squareVB = Engine::VertexBuffer::Create(squareVertices, sizeof(squareVertices));
 
             squareVB->SetLayout({
-                                    {Engine::ShaderDataType::Float3, "a_Position"}
+                                    {Engine::ShaderDataType::Float3, "a_Position"},
+                                    {Engine::ShaderDataType::Float2, "a_TexCoord"}
                                 });
 
             m_SquareVA->AddVertexBuffer(squareVB);
 
-            std::shared_ptr<Engine::IndexBuffer> indexBuffer;
-            indexBuffer.reset(Engine::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+            Engine::Ref<Engine::IndexBuffer> indexBuffer = Engine::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
 
             m_SquareVA->SetIndexBuffer(indexBuffer);
         }
@@ -91,7 +88,7 @@ void main() {
 
 )";
 
-        m_Shader = std::unique_ptr<Engine::Shader>(Engine::Shader::Create(vertexSrc, fragmentSrc));
+        m_Shader = Engine::Shader::Create(vertexSrc, fragmentSrc);
 
         std::string flatColorShaderVertexSrc = R"(
 #version 330 core
@@ -120,8 +117,45 @@ void main() {
 
 )";
 
-        m_FlatShader = std::unique_ptr<Engine::Shader>(Engine::Shader::Create(flatColorShaderVertexSrc, flatColorShaderFragmentShader));
+        m_FlatShader = Engine::Shader::Create(flatColorShaderVertexSrc, flatColorShaderFragmentShader);
 
+        std::string TextureShaderVertexSrc = R"(
+#version 330 core
+
+layout(location = 0) in vec3 a_Position;
+layout(location = 1) in vec2 a_TexCoord;
+
+uniform mat4 u_ViewProjection;
+uniform mat4 u_Transform;
+
+out vec2 v_TexCoord;
+
+void main() {
+    v_TexCoord = a_TexCoord;
+    gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
+}
+
+)";
+        std::string TextureShaderFragmentShader = R"(
+#version 330 core
+
+layout(location = 0) out vec4 color;
+
+in vec2 v_TexCoord;
+
+uniform vec3 u_Color;
+uniform sampler2D u_Texture;
+
+void main() {
+    color = texture(u_Texture, v_TexCoord) * vec4(u_Color, 1.0);
+}
+
+)";
+
+        m_TextureShader = Engine::Shader::Create(TextureShaderVertexSrc, TextureShaderFragmentShader);
+
+        m_Texture = Engine::Texture2D::Create("assets/textures/Checkerboard.png");
+        std::dynamic_pointer_cast<Engine::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
     }
 
     virtual void OnUpdate(Engine::TimeStep ts) override {
@@ -163,7 +197,7 @@ void main() {
         Engine::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
         Engine::RenderCommand::Clear();
         Engine::Renderer::BeginScene(m_Camera);
-        Engine::Renderer::Submit(m_Shader, m_VertexArray);
+//        Engine::Renderer::Submit(m_Shader, m_VertexArray);
 
 //        Engine::MaterialRef material = new Engine::Material(m_FlatShader);
 
@@ -181,6 +215,11 @@ void main() {
             }
         }
 
+        m_Texture->Bind();
+        std::dynamic_pointer_cast<Engine::OpenGLShader>(m_TextureShader)->Bind();
+        std::dynamic_pointer_cast<Engine::OpenGLShader>(m_TextureShader)->UploadUniformFloat3("u_Color", m_SquareColor);
+        Engine::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+
         Engine::Renderer::EndScene();
     }
     virtual void OnImGuiRender() override {
@@ -190,11 +229,14 @@ void main() {
     }
 
 private:
-    std::shared_ptr<Engine::Shader> m_Shader;
-    std::shared_ptr<Engine::Shader> m_FlatShader;
+    Engine::Ref<Engine::Shader> m_Shader;
+    Engine::Ref<Engine::Shader> m_FlatShader;
+    Engine::Ref<Engine::Shader> m_TextureShader;
 
-    std::shared_ptr<Engine::VertexArray> m_VertexArray;
-    std::shared_ptr<Engine::VertexArray> m_SquareVA;
+    Engine::Ref<Engine::Texture2D> m_Texture;
+
+    Engine::Ref<Engine::VertexArray> m_VertexArray;
+    Engine::Ref<Engine::VertexArray> m_SquareVA;
 
     Engine::OrthographicCamera m_Camera;
     glm::vec3 m_CameraPosition{0.0f};

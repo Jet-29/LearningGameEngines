@@ -1,18 +1,18 @@
 #include "EnginePch.h"
-#include "Shader.h"
+#include "Texture.h"
 
 #include "Renderer.h"
-#include "Platforms/OpenGL/OpenGLShader.h"
+#include "Platforms/OpenGL/OpenGLTexture.h"
 
 namespace Engine {
 
-    Ref<Shader> Shader::Create(const std::string &vertexSrc, const std::string &fragmentSrc) {
+    Ref<Texture2D> Texture2D::Create(const std::string &path) {
         switch (Renderer::GetAPI()) {
             case RendererAPI::API::None: ENGINE_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
                 return nullptr;
-            case RendererAPI::API::OpenGL: return CreateRef<OpenGLShader>(vertexSrc, fragmentSrc);
+            case RendererAPI::API::OpenGL: return CreateRef<OpenGLTexture2D>(path);
         }
         ENGINE_CORE_ASSERT(false, "Unknown RenderAPI!");
         return nullptr;
     }
-}
+} // Engine

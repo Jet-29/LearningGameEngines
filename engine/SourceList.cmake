@@ -13,6 +13,7 @@ set(ENGINE_SOURCE_FILES
         "src/Engine/Renderer/Buffer.cpp"
         "src/Engine/Renderer/VertexArray.cpp"
         "src/Engine/Renderer/OrthographicCamera.cpp"
+        "src/Engine/Renderer/Texture.cpp"
         )
 
 Set(OPENGL_SOURCE_FILES
@@ -21,6 +22,7 @@ Set(OPENGL_SOURCE_FILES
         "src/Platforms/OpenGL/OpenGLBuffer.cpp"
         "src/Platforms/OpenGL/OpenGLVertexArray.cpp"
         "src/Platforms/OpenGL/OpenGLShader.cpp"
+        "src/Platforms/OpenGL/OpenGLTexture.cpp"
         )
 
 Set(WINDOWS_SOURCE_FILES
@@ -45,8 +47,13 @@ set(IMGUI_SOURCE_FILES
         "vendor/imgui/imgui_demo.cpp"
         )
 
+set(STB_SOURCE_FILES
+        "vendor/stb_image/stb_image.cpp"
+        )
+
 Set(ALL_SOURCE_FILES
         ${ENGINE_SOURCE_FILES}
         ${PLATFORM_SOURCE}
         ${IMGUI_SOURCE_FILES}
+        ${STB_SOURCE_FILES}
         )
