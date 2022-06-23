@@ -20,6 +20,7 @@ Set(OPENGL_SOURCE_FILES
         "src/Platforms/OpenGL/OpenGLRendererAPI.cpp"
         "src/Platforms/OpenGL/OpenGLBuffer.cpp"
         "src/Platforms/OpenGL/OpenGLVertexArray.cpp"
+        "src/Platforms/OpenGL/OpenGLShader.cpp"
         )
 
 Set(WINDOWS_SOURCE_FILES

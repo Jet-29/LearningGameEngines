@@ -2,7 +2,7 @@
 #include "VertexArray.h"
 #include "Renderer.h"
 
-#include <Platforms/OpenGL/OpenGLVertexArray.h>
+#include "Platforms/OpenGL/OpenGLVertexArray.h"
 
 namespace Engine {
     VertexArray *VertexArray::Create() {
