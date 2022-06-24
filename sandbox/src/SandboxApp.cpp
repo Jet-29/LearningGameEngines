@@ -147,7 +147,7 @@ uniform vec3 u_Color;
 uniform sampler2D u_Texture;
 
 void main() {
-    color = texture(u_Texture, v_TexCoord) * vec4(u_Color, 1.0);
+    color = texture(u_Texture, v_TexCoord) + vec4(u_Color, 1.0) * 0.0;
 }
 
 )";
@@ -155,6 +155,7 @@ void main() {
         m_TextureShader = Engine::Shader::Create(TextureShaderVertexSrc, TextureShaderFragmentShader);
 
         m_Texture = Engine::Texture2D::Create("assets/textures/Checkerboard.png");
+        m_ChernoLogo = Engine::Texture2D::Create("assets/textures/ChernoLogo.png");
         std::dynamic_pointer_cast<Engine::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
     }
 
@@ -220,6 +221,10 @@ void main() {
         std::dynamic_pointer_cast<Engine::OpenGLShader>(m_TextureShader)->UploadUniformFloat3("u_Color", m_SquareColor);
         Engine::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
+        m_ChernoLogo->Bind();
+        Engine::Renderer::Submit(m_TextureShader, m_SquareVA, glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, 0.0f)) *
+                                 glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+
         Engine::Renderer::EndScene();
     }
     virtual void OnImGuiRender() override {
@@ -233,7 +238,7 @@ private:
     Engine::Ref<Engine::Shader> m_FlatShader;
     Engine::Ref<Engine::Shader> m_TextureShader;
 
-    Engine::Ref<Engine::Texture2D> m_Texture;
+    Engine::Ref<Engine::Texture2D> m_Texture, m_ChernoLogo;
 
     Engine::Ref<Engine::VertexArray> m_VertexArray;
     Engine::Ref<Engine::VertexArray> m_SquareVA;

@@ -1,6 +1,8 @@
 #include "EnginePch.h"
 #include "Application.h"
 
+#include "Engine/Renderer/Renderer.h"
+
 namespace Engine {
 
     Application *Application::s_Instance = nullptr;
@@ -11,6 +13,8 @@ namespace Engine {
 
         m_Window = std::unique_ptr<Window>(Window::Create());
         m_Window->SetEventCallback(ENGINE_BIND_EVENT_FN(OnEvent));
+
+        Renderer::Init();
 
         m_ImGuiLayer = new ImGuiLayer();
         PushOverlay(m_ImGuiLayer);
