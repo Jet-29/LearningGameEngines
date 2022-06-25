@@ -9,10 +9,12 @@ set(ENGINE_SOURCE_FILES
         "src/Engine/Renderer/Renderer.cpp"
         "src/Engine/Renderer/RendererAPI.cpp"
         "src/Engine/Renderer/RenderCommand.cpp"
+        "src/Engine/Renderer/Renderer2D.cpp"
         "src/Engine/Renderer/Shader.cpp"
         "src/Engine/Renderer/Buffer.cpp"
         "src/Engine/Renderer/VertexArray.cpp"
         "src/Engine/Renderer/OrthographicCamera.cpp"
+        "src/Engine/Renderer/OrthographicCameraController.cpp"
         "src/Engine/Renderer/Texture.cpp"
         )
 
