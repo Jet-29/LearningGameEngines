@@ -27,7 +27,7 @@ set(Includes
         ${PROJECT_SOURCE_DIR}/vendor/stb_image
         )
 
-set(Libraries "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/glfw3.lib ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/glad.lib")
+set(Libraries "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/glfw3.lib ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/glad.lib ")
 
 set(CMAKE_STATIC_LINKER_FLAGS ${Libraries})
 

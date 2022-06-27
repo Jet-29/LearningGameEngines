@@ -42,12 +42,7 @@ namespace Engine {
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
     }
-//    void ImGuiLayer::OnUpdate() {
-//
-//        static bool show = true;
-//        ImGui::ShowDemoWindow(&show);
-//
-//    }
+
     void ImGuiLayer::OnEvent(Event &event) {
         ImGuiIO &io = ImGui::GetIO();
         event.Handled |= event.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
@@ -155,9 +150,4 @@ namespace Engine {
         style.LogSliderDeadzone = 4;
         style.TabRounding = 4;
     }
-    void ImGuiLayer::OnImGuiRender() {
-        static bool show = true;
-        ImGui::ShowDemoWindow(&show);
-    }
-
 } // Engine

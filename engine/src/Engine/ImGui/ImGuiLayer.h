@@ -16,8 +16,6 @@ namespace Engine {
         virtual void OnDetach() override;
         virtual void OnEvent(Event &event) override;
 
-        virtual void OnImGuiRender() override;
-
         static void Begin();
         static void End();
 

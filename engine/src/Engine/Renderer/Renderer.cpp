@@ -25,6 +25,6 @@ namespace Engine {
         shader->SetMat4("u_Transform", transform);
 
         vertexArray->Bind();
-        RenderCommand::DrawIndexed(vertexArray);
+        RenderCommand::DrawIndexed(vertexArray, 0);
     }
 } // Engine

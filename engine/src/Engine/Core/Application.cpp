@@ -45,8 +45,10 @@ namespace Engine {
             }
 
             Engine::ImGuiLayer::Begin();
-            for (Layer *layer : m_LayerStack) {
-                layer->OnImGuiRender();
+            {
+                for (Layer *layer : m_LayerStack) {
+                    layer->OnImGuiRender();
+                }
             }
             Engine::ImGuiLayer::End();
 
