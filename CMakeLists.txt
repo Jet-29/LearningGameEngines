@@ -4,4 +4,5 @@ project(LearningGameEngines CXX)
 include(${CMAKE_SOURCE_DIR}/cmake/config.cmake)
 
 add_subdirectory("engine")
+add_subdirectory("editor")
 add_subdirectory("sandbox")

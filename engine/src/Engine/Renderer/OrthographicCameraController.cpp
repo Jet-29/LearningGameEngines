@@ -4,7 +4,7 @@
 #include "Engine/Core/Input.h"
 
 namespace Engine {
-    OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation) : m_AspectRatio(aspectRatio), m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel), m_Rotation(rotation) {
+    OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation) : m_AspectRatio(aspectRatio), m_Bounds{-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel}, m_Camera(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top), m_Rotation(rotation) {
 
     }
     void OrthographicCameraController::OnUpdate(TimeStep ts) {
@@ -32,20 +32,30 @@ namespace Engine {
             m_Camera.SetRotation(m_CameraRotation);
         }
     }
-    void OrthographicCameraController::OnEvent(Event &e) {
+    void OrthographicCameraController::OnEvent(Event& e) {
         EventDispatcher eventDispatcher(e);
         eventDispatcher.Dispatch<MouseScrolledEvent>(ENGINE_BIND_EVENT_FN(OnMouseScrolled));
         eventDispatcher.Dispatch<WindowResizeEvent>(ENGINE_BIND_EVENT_FN(OnWindowResize));
     }
-    bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent &e) {
+    bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e) {
         m_ZoomLevel -= e.GetYOffset() * m_CameraZoomSpeed;
-        m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
-        m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+        CalculateView();
         return false;
     }
-    bool OrthographicCameraController::OnWindowResize(WindowResizeEvent &e) {
-        m_AspectRatio = (float) e.GetWidth() / (float) e.GetHeight();
-        m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+    bool OrthographicCameraController::OnWindowResize(WindowResizeEvent& e) {
+        ResizeBounds((float) e.GetWidth(), (float) e.GetHeight());
         return false;
+    }
+    void OrthographicCameraController::CalculateView() {
+        m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
+        m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+    }
+    void OrthographicCameraController::SetZoomLevel(float level) {
+        m_ZoomLevel = level;
+        CalculateView();
+    }
+    void OrthographicCameraController::ResizeBounds(float width, float height) {
+        m_AspectRatio = width / height;
+        CalculateView();
     }
 } // Engine

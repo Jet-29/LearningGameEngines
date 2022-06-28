@@ -5,13 +5,13 @@
 
 namespace Engine {
 
-    Application *Application::s_Instance = nullptr;
+    Application* Application::s_Instance = nullptr;
 
-    Application::Application() {
+    Application::Application(const std::string& name) {
         ENGINE_CORE_ASSERT(!s_Instance, "Application already exists!")
         s_Instance = this;
 
-        m_Window = std::unique_ptr<Window>(Window::Create());
+        m_Window = std::unique_ptr<Window>(Window::Create(Window::WindowProps(name)));
         m_Window->SetEventCallback(ENGINE_BIND_EVENT_FN(OnEvent));
 
         Renderer::Init();
@@ -20,7 +20,7 @@ namespace Engine {
         PushOverlay(m_ImGuiLayer);
 
     }
-    void Application::OnEvent(Event &e) {
+    void Application::OnEvent(Event& e) {
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowCloseEvent>(ENGINE_BIND_EVENT_FN(OnWindowClose));
         dispatcher.Dispatch<WindowResizeEvent>(ENGINE_BIND_EVENT_FN(OnWindowResize));
@@ -39,14 +39,14 @@ namespace Engine {
             m_LastFrameTime = time;
 
             if (!m_Minimized) {
-                for (Layer *layer : m_LayerStack) {
+                for (Layer* layer : m_LayerStack) {
                     layer->OnUpdate(timeStep);
                 }
             }
 
             Engine::ImGuiLayer::Begin();
             {
-                for (Layer *layer : m_LayerStack) {
+                for (Layer* layer : m_LayerStack) {
                     layer->OnImGuiRender();
                 }
             }
@@ -55,19 +55,17 @@ namespace Engine {
             m_Window->OnUpdate();
         }
     }
-    void Application::PushLayer(Layer *layer) {
+    void Application::PushLayer(Layer* layer) {
         m_LayerStack.PushLayer(layer);
-        layer->OnAttach();
     }
-    void Application::PushOverlay(Layer *overlay) {
+    void Application::PushOverlay(Layer* overlay) {
         m_LayerStack.PushOverlay(overlay);
-        overlay->OnAttach();
     }
-    bool Application::OnWindowClose(WindowCloseEvent &e) {
+    bool Application::OnWindowClose(WindowCloseEvent& e) {
         m_Running = false;
         return true;
     }
-    bool Application::OnWindowResize(WindowResizeEvent &e) {
+    bool Application::OnWindowResize(WindowResizeEvent& e) {
 
         if (e.GetWidth() == 0 || e.GetHeight() == 0) {
             m_Minimized = true;
@@ -77,5 +75,8 @@ namespace Engine {
         m_Minimized = false;
         Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
         return false;
+    }
+    void Application::Close() {
+        m_Running = false;
     }
 } // Engine

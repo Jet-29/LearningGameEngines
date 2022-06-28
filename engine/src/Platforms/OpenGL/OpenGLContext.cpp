@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 
 namespace Engine {
-    OpenGLContext::OpenGLContext(GLFWwindow *windowHandle) : m_WindowHandle(windowHandle) {
+    OpenGLContext::OpenGLContext(GLFWwindow* windowHandle) : m_WindowHandle(windowHandle) {
         ENGINE_CORE_ASSERT(m_WindowHandle, "Handle is null!");
     }
     void OpenGLContext::Init() {

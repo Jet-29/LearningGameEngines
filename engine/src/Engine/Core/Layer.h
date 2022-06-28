@@ -8,14 +8,14 @@ namespace Engine {
 
     class ENGINE_API Layer {
     public:
-        Layer(const std::string &name = "Layer");
+        Layer(const std::string& name = "Layer");
         virtual ~Layer() = default;
 
         virtual void OnAttach() {}
         virtual void OnDetach() {}
         virtual void OnUpdate(TimeStep dt) {}
         virtual void OnImGuiRender() {}
-        virtual void OnEvent(Event &event) {}
+        virtual void OnEvent(Event& event) {}
 
         inline std::string GetName() const { return m_DebugName; }
 

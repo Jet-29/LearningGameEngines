@@ -38,7 +38,7 @@ namespace Engine {
         bool Normalized;
 
         BufferElement() {}
-        BufferElement(ShaderDataType type, const std::string &name, bool normalize = false) : Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalize) {}
+        BufferElement(ShaderDataType type, const std::string& name, bool normalize = false) : Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalize) {}
 
         uint32_t GetComponentCount() const {
             switch (Type) {
@@ -64,12 +64,12 @@ namespace Engine {
     class BufferLayout {
     public:
         BufferLayout() {}
-        BufferLayout(const std::initializer_list<BufferElement> &elements) : m_Elements(elements) {
+        BufferLayout(const std::initializer_list<BufferElement>& elements) : m_Elements(elements) {
             CalculateOffsetsAndStride();
         }
 
         inline uint32_t GetStride() const { return m_Stride; }
-        inline const std::vector<BufferElement> &GetElements() const { return m_Elements; }
+        inline const std::vector<BufferElement>& GetElements() const { return m_Elements; }
 
         std::vector<BufferElement>::iterator begin() { return m_Elements.begin(); }
         std::vector<BufferElement>::iterator end() { return m_Elements.end(); }
@@ -79,7 +79,7 @@ namespace Engine {
     private:
         void CalculateOffsetsAndStride() {
             uint32_t offset = 0;
-            for (auto &element : m_Elements) {
+            for (auto& element : m_Elements) {
                 element.Offset = offset;
                 offset += element.Size;
             }
@@ -96,13 +96,13 @@ namespace Engine {
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
 
-        virtual void SetData(const void *data, uint32_t size) = 0;
+        virtual void SetData(const void* data, uint32_t size) = 0;
 
-        virtual void SetLayout(const BufferLayout &layout) = 0;
-        virtual const BufferLayout &GetLayout() = 0;
+        virtual void SetLayout(const BufferLayout& layout) = 0;
+        virtual const BufferLayout& GetLayout() = 0;
 
         static Ref<VertexBuffer> Create(uint32_t size);
-        static Ref<VertexBuffer> Create(float *vertices, uint32_t size);
+        static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
     };
 
     class IndexBuffer {
@@ -114,6 +114,6 @@ namespace Engine {
 
         virtual uint32_t GetCount() const = 0;
 
-        static Ref<IndexBuffer> Create(uint32_t *indices, uint32_t count);
+        static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t count);
     };
 }

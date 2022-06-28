@@ -18,7 +18,7 @@ namespace Engine {
         ImGui::CreateContext();
         ImGui::StyleColorsDark();
 
-        ImGuiIO &io = ImGui::GetIO();
+        ImGuiIO& io = ImGui::GetIO();
         io.IniFilename = "uiConfig.ini"; // disable the settings file generation;
 
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
@@ -30,8 +30,8 @@ namespace Engine {
 
         SetDarkThemeColors();
 
-        Application &app = Application::Get();
-        auto *window = static_cast<GLFWwindow *>(app.GetWindow().GetNativeWindow());
+        Application& app = Application::Get();
+        auto* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 
         // todo: Setup Platform/Renderer bindings
         ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -43,8 +43,8 @@ namespace Engine {
         ImGui::DestroyContext();
     }
 
-    void ImGuiLayer::OnEvent(Event &event) {
-        ImGuiIO &io = ImGui::GetIO();
+    void ImGuiLayer::OnEvent(Event& event) {
+        ImGuiIO& io = ImGui::GetIO();
         event.Handled |= event.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
         event.Handled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
     }
@@ -54,22 +54,22 @@ namespace Engine {
         ImGui::NewFrame();
     }
     void ImGuiLayer::End() {
-        ImGuiIO &io = ImGui::GetIO();
-        Window &window = Application::Get().GetWindow();
+        ImGuiIO& io = ImGui::GetIO();
+        Window& window = Application::Get().GetWindow();
         io.DisplaySize = ImVec2((float) window.GetWidth(), (float) window.GetHeight());
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-            GLFWwindow *backup_current_context = glfwGetCurrentContext();
+            GLFWwindow* backup_current_context = glfwGetCurrentContext();
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
             glfwMakeContextCurrent(backup_current_context);
         }
     }
     void ImGuiLayer::SetDarkThemeColors() {
-        ImVec4 *colors = ImGui::GetStyle().Colors;
+        ImVec4* colors = ImGui::GetStyle().Colors;
         colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
         colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
         colors[ImGuiCol_WindowBg] = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
@@ -109,7 +109,7 @@ namespace Engine {
         colors[ImGuiCol_TabUnfocused] = ImVec4(0.00f, 0.00f, 0.00f, 0.52f);
         colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
         colors[ImGuiCol_DockingPreview] = ImVec4(0.33f, 0.67f, 0.86f, 1.00f);
-        colors[ImGuiCol_DockingEmptyBg] = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
+        colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
         colors[ImGuiCol_PlotLines] = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
         colors[ImGuiCol_PlotLinesHovered] = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
         colors[ImGuiCol_PlotHistogram] = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
@@ -126,7 +126,7 @@ namespace Engine {
         colors[ImGuiCol_NavWindowingDimBg] = ImVec4(1.00f, 0.00f, 0.00f, 0.20f);
         colors[ImGuiCol_ModalWindowDimBg] = ImVec4(1.00f, 0.00f, 0.00f, 0.35f);
 
-        ImGuiStyle &style = ImGui::GetStyle();
+        ImGuiStyle& style = ImGui::GetStyle();
         style.WindowPadding = ImVec2(8.00f, 8.00f);
         style.FramePadding = ImVec2(5.00f, 2.00f);
         style.CellPadding = ImVec2(6.00f, 6.00f);

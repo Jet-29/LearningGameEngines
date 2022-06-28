@@ -5,14 +5,15 @@ include(SourceList.cmake)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
+add_dependencies(${PROJECT_NAME} engine)
+
 set(Includes
+        ${PROJECT_SOURCE_DIR}/src
         ${CMAKE_SOURCE_DIR}/engine/src
         ${CMAKE_SOURCE_DIR}/engine/vendor/spdlog/include
         ${CMAKE_SOURCE_DIR}/engine/vendor/imgui
         ${CMAKE_SOURCE_DIR}/engine/vendor/glm
         )
-
-add_dependencies(${PROJECT_NAME} engine)
 
 set(Libraries
         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/engine.lib

@@ -16,7 +16,7 @@ namespace Engine {
         ENGINE_CORE_ASSERT(false, "Unknown RenderAPI!");
         return nullptr;
     }
-    Ref<VertexBuffer> VertexBuffer::Create(float *vertices, uint32_t size) {
+    Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size) {
         switch (Renderer::GetAPI()) {
             case RendererAPI::API::None: ENGINE_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
                 return nullptr;
@@ -25,7 +25,7 @@ namespace Engine {
         ENGINE_CORE_ASSERT(false, "Unknown RenderAPI!");
         return nullptr;
     }
-    Ref<IndexBuffer> IndexBuffer::Create(uint32_t *indices, uint32_t count) {
+    Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count) {
         switch (Renderer::GetAPI()) {
             case RendererAPI::API::None: ENGINE_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
                 return nullptr;

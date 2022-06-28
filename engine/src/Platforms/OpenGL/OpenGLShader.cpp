@@ -8,14 +8,14 @@
 
 namespace Engine {
 
-    static GLenum ShaderTypeFromString(const std::string &type) {
+    static GLenum ShaderTypeFromString(const std::string& type) {
         if (type == "vertex") return GL_VERTEX_SHADER;
         if (type == "fragment") return GL_FRAGMENT_SHADER;
         ENGINE_CORE_ASSERT(false, "Unknown shader type!");
         return 0;
     }
 
-    OpenGLShader::OpenGLShader(const std::string &filepath) {
+    OpenGLShader::OpenGLShader(const std::string& filepath) {
         std::string source = ReadFile(filepath);
         auto shaderSources = PreProcess(source);
         Compile(shaderSources);
@@ -27,7 +27,7 @@ namespace Engine {
         auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
         m_Name = filepath.substr(lastSlash, count);
     }
-    OpenGLShader::OpenGLShader(const std::string &name, const std::string &vertexSrc, const std::string &fragmentSrc) : m_Name(name) {
+    OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc) : m_Name(name) {
         std::unordered_map<GLenum, std::string> sources;
         sources[GL_VERTEX_SHADER] = vertexSrc;
         sources[GL_FRAGMENT_SHADER] = fragmentSrc;
@@ -36,7 +36,7 @@ namespace Engine {
     OpenGLShader::~OpenGLShader() {
         glDeleteProgram(m_RendererID);
     }
-    std::string OpenGLShader::ReadFile(const std::string &filepath) {
+    std::string OpenGLShader::ReadFile(const std::string& filepath) {
         std::string result;
         std::ifstream in(filepath, std::ios::in | std::ios::binary);
         if (in) {
@@ -50,10 +50,10 @@ namespace Engine {
         }
         return result;
     }
-    std::unordered_map<uint32_t, std::string> OpenGLShader::PreProcess(const std::string &source) {
+    std::unordered_map<uint32_t, std::string> OpenGLShader::PreProcess(const std::string& source) {
         std::unordered_map<GLenum, std::string> shaderSources;
 
-        const char *typeToken = "#type";
+        const char* typeToken = "#type";
         size_t typeTokenLength = strlen(typeToken);
         size_t pos = source.find(typeToken, 0);
         while (pos != std::string::npos) {
@@ -69,20 +69,20 @@ namespace Engine {
         }
         return shaderSources;
     }
-    void OpenGLShader::Compile(const std::unordered_map<uint32_t, std::string> &shaderSources) {
+    void OpenGLShader::Compile(const std::unordered_map<uint32_t, std::string>& shaderSources) {
 
         GLuint program = glCreateProgram();
         ENGINE_CORE_ASSERT(shaderSources.size() < 3, "We only support 5 shaders per file")
         std::array<GLenum, 5> glShaderIDs;
         uint32_t glShaderIDIndex = 0;
 
-        for (auto &kv : shaderSources) {
+        for (auto& kv : shaderSources) {
             GLenum type = kv.first;
-            const std::string &source = kv.second;
+            const std::string& source = kv.second;
 
             GLuint shader = glCreateShader(type);
 
-            const GLchar *sourceCStr = source.c_str();
+            const GLchar* sourceCStr = source.c_str();
             glShaderSource(shader, 1, &sourceCStr, nullptr);
             glCompileShader(shader);
 
@@ -110,7 +110,7 @@ namespace Engine {
         glLinkProgram(m_RendererID);
 
         GLint isLinked = 0;
-        glGetProgramiv(m_RendererID, GL_LINK_STATUS, (int *) &isLinked);
+        glGetProgramiv(m_RendererID, GL_LINK_STATUS, (int*) &isLinked);
         if (isLinked == GL_FALSE) {
             GLint maxLength = 0;
             glGetProgramiv(m_RendererID, GL_INFO_LOG_LENGTH, &maxLength);
@@ -138,56 +138,56 @@ namespace Engine {
     void OpenGLShader::Unbind() const {
         glUseProgram(0);
     }
-    void OpenGLShader::SetInt(const std::string &name, int value) {
+    void OpenGLShader::SetInt(const std::string& name, int value) {
         UploadUniformInt(name, value);
     }
-    void OpenGLShader::SetIntArray(const std::string &name, int *value, uint32_t count) {
+    void OpenGLShader::SetIntArray(const std::string& name, int* value, uint32_t count) {
         UploadUniformIntArray(name, value, count);
     }
-    void OpenGLShader::SetFloat(const std::string &name, float value) {
+    void OpenGLShader::SetFloat(const std::string& name, float value) {
         UploadUniformFloat(name, value);
     }
-    void OpenGLShader::SetFloat2(const std::string &name, const glm::vec2 &value) {
+    void OpenGLShader::SetFloat2(const std::string& name, const glm::vec2& value) {
         UploadUniformFloat2(name, value);
     }
-    void OpenGLShader::SetFloat3(const std::string &name, const glm::vec3 &value) {
+    void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& value) {
         UploadUniformFloat3(name, value);
     }
-    void OpenGLShader::SetFloat4(const std::string &name, const glm::vec4 &value) {
+    void OpenGLShader::SetFloat4(const std::string& name, const glm::vec4& value) {
         UploadUniformFloat4(name, value);
     }
-    void OpenGLShader::SetMat4(const std::string &name, const glm::mat4 &value) {
+    void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& value) {
         UploadUniformMat4(name, value);
     }
-    void OpenGLShader::UploadUniformMat3(const std::string &name, const glm::mat3 &matrix) const {
+    void OpenGLShader::UploadUniformMat3(const std::string& name, const glm::mat3& matrix) const {
         GLint location = glGetUniformLocation(m_RendererID, name.c_str());
         glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
     }
-    void OpenGLShader::UploadUniformMat4(const std::string &name, const glm::mat4 &matrix) const {
+    void OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4& matrix) const {
         GLint location = glGetUniformLocation(m_RendererID, name.c_str());
         glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
     }
-    void OpenGLShader::UploadUniformInt(const std::string &name, const int &value) const {
+    void OpenGLShader::UploadUniformInt(const std::string& name, const int& value) const {
         GLint location = glGetUniformLocation(m_RendererID, name.c_str());
         glUniform1i(location, value);
     }
-    void OpenGLShader::UploadUniformIntArray(const std::string &name, int *value, uint32_t count) const {
+    void OpenGLShader::UploadUniformIntArray(const std::string& name, int* value, uint32_t count) const {
         GLint location = glGetUniformLocation(m_RendererID, name.c_str());
         glUniform1iv(location, count, value);
     }
-    void OpenGLShader::UploadUniformFloat(const std::string &name, const float &value) const {
+    void OpenGLShader::UploadUniformFloat(const std::string& name, const float& value) const {
         GLint location = glGetUniformLocation(m_RendererID, name.c_str());
         glUniform1f(location, value);
     }
-    void OpenGLShader::UploadUniformFloat2(const std::string &name, const glm::vec2 &vector) const {
+    void OpenGLShader::UploadUniformFloat2(const std::string& name, const glm::vec2& vector) const {
         GLint location = glGetUniformLocation(m_RendererID, name.c_str());
         glUniform2f(location, vector.x, vector.y);
     }
-    void OpenGLShader::UploadUniformFloat3(const std::string &name, const glm::vec3 &vector) const {
+    void OpenGLShader::UploadUniformFloat3(const std::string& name, const glm::vec3& vector) const {
         GLint location = glGetUniformLocation(m_RendererID, name.c_str());
         glUniform3f(location, vector.x, vector.y, vector.z);
     }
-    void OpenGLShader::UploadUniformFloat4(const std::string &name, const glm::vec4 &vector) const {
+    void OpenGLShader::UploadUniformFloat4(const std::string& name, const glm::vec4& vector) const {
         GLint location = glGetUniformLocation(m_RendererID, name.c_str());
         glUniform4f(location, vector.x, vector.y, vector.z, vector.w);
     }

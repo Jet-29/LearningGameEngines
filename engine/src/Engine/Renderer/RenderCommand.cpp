@@ -4,5 +4,5 @@
 #include "Platforms/OpenGL/OpenGLRendererAPI.h"
 
 namespace Engine {
-    RendererAPI *RenderCommand::s_RendererAPI = new OpenGLRendererAPI;
+    RendererAPI* RenderCommand::s_RendererAPI = new OpenGLRendererAPI;
 } // Engine

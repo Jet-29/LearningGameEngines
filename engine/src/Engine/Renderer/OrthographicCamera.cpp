@@ -11,10 +11,10 @@ namespace Engine {
         m_ProjectionMatrix = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
         m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
     }
-    const glm::vec3 &OrthographicCamera::GetPosition() {
+    const glm::vec3& OrthographicCamera::GetPosition() {
         return m_Position;
     }
-    void OrthographicCamera::SetPosition(const glm::vec3 &position) {
+    void OrthographicCamera::SetPosition(const glm::vec3& position) {
         m_Position = position;
         RecalculateViewMatrix();
     }
@@ -32,13 +32,13 @@ namespace Engine {
         m_ViewMatrix = glm::inverse(transform);
         m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
     }
-    const glm::mat4 &OrthographicCamera::GetProjectionMatrix() const {
+    const glm::mat4& OrthographicCamera::GetProjectionMatrix() const {
         return m_ProjectionMatrix;
     }
-    const glm::mat4 &OrthographicCamera::GetViewMatrix() const {
+    const glm::mat4& OrthographicCamera::GetViewMatrix() const {
         return m_ViewMatrix;
     }
-    const glm::mat4 &OrthographicCamera::GetViewProjectionMatrix() const {
+    const glm::mat4& OrthographicCamera::GetViewProjectionMatrix() const {
         return m_ViewProjectionMatrix;
     }
 } // Engine

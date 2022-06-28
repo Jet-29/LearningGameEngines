@@ -14,7 +14,7 @@ namespace Engine {
 
         virtual void OnAttach() override;
         virtual void OnDetach() override;
-        virtual void OnEvent(Event &event) override;
+        virtual void OnEvent(Event& event) override;
 
         static void Begin();
         static void End();

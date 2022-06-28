@@ -16,6 +16,8 @@ set(ENGINE_SOURCE_FILES
         "src/Engine/Renderer/OrthographicCamera.cpp"
         "src/Engine/Renderer/OrthographicCameraController.cpp"
         "src/Engine/Renderer/Texture.cpp"
+        "src/Engine/Renderer/SubTexture2D.cpp"
+        "src/Engine/Renderer/FrameBuffer.cpp"
         )
 
 Set(OPENGL_SOURCE_FILES
@@ -25,6 +27,7 @@ Set(OPENGL_SOURCE_FILES
         "src/Platforms/OpenGL/OpenGLVertexArray.cpp"
         "src/Platforms/OpenGL/OpenGLShader.cpp"
         "src/Platforms/OpenGL/OpenGLTexture.cpp"
+        "src/Platforms/OpenGL/OpenGLFrameBuffer.cpp"
         )
 
 Set(WINDOWS_SOURCE_FILES

@@ -35,22 +35,22 @@ namespace Engine {
     void OpenGLVertexArray::Unbind() const {
         glBindVertexArray(0);
     }
-    void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer> &vertexBuffer) {
+    void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
         ENGINE_CORE_ASSERT(!vertexBuffer->GetLayout().GetElements().empty(), "Vertex buffer has no layout!");
 
         glBindVertexArray(m_RendererID);
         vertexBuffer->Bind();
 
         uint32_t index = 0;
-        const auto &layout = vertexBuffer->GetLayout();
-        for (const auto &element : layout) {
+        const auto& layout = vertexBuffer->GetLayout();
+        for (const auto& element : layout) {
             glEnableVertexAttribArray(index);
-            glVertexAttribPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGLBaseType(element.Type), element.Normalized ? GL_TRUE : GL_FALSE, static_cast<int>(layout.GetStride()), reinterpret_cast<const void *>(static_cast<uint64_t>(element.Offset)));
+            glVertexAttribPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGLBaseType(element.Type), element.Normalized ? GL_TRUE : GL_FALSE, static_cast<int>(layout.GetStride()), reinterpret_cast<const void*>(static_cast<uint64_t>(element.Offset)));
             index++;
         }
         m_VertexBuffers.push_back(vertexBuffer);
     }
-    void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer> &indexBuffer) {
+    void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer) {
         glBindVertexArray(m_RendererID);
         indexBuffer->Bind();
 

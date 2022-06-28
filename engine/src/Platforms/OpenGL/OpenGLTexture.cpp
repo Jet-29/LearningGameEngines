@@ -19,10 +19,10 @@ namespace Engine {
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
     }
-    OpenGLTexture2D::OpenGLTexture2D(const std::string &path) : m_Path(path) {
+    OpenGLTexture2D::OpenGLTexture2D(const std::string& path) : m_Path(path) {
         int width, height, channels;
         stbi_set_flip_vertically_on_load(true);
-        stbi_uc *data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+        stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
         ENGINE_CORE_ASSERT(data, "Failed to load image!");
         m_Width = width;
         m_Height = height;
@@ -58,7 +58,7 @@ namespace Engine {
     OpenGLTexture2D::~OpenGLTexture2D() {
         glDeleteTextures(1, &m_RendererID);
     }
-    void OpenGLTexture2D::SetData(void *data, uint32_t size) {
+    void OpenGLTexture2D::SetData(void* data, uint32_t size) {
         uint32_t bpp = m_DataFormat == GL_RGBA ? 4 : 3;
         ENGINE_CORE_ASSERT(size == m_Width * m_Height * bpp, "Data must be entire texture!")
         glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
@@ -66,7 +66,7 @@ namespace Engine {
     void OpenGLTexture2D::Bind(uint32_t slot) const {
         glBindTextureUnit(slot, m_RendererID);
     }
-    bool OpenGLTexture2D::operator==(const Texture &other) const {
-        return m_RendererID == ((OpenGLTexture2D &) other).m_RendererID;
+    bool OpenGLTexture2D::operator==(const Texture& other) const {
+        return m_RendererID == ((OpenGLTexture2D&) other).m_RendererID;
     }
 } // Engine
