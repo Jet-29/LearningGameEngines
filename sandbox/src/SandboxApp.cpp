@@ -10,7 +10,7 @@ class Sandbox : public Engine::Application {
 public:
     Sandbox() {
 //        PushLayer(new ExampleLayer());
-        PushLayer(new EditorLayer());
+        PushLayer(new Example2DLayer());
 //        PushLayer(new ParticleSystemLayer());
 //        PushLayer(new TileMapExampleLayer());
     }

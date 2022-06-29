@@ -20,7 +20,7 @@ void ParticleSystemLayer::OnUpdate(Engine::TimeStep dt) {
         auto width = Engine::Application::Get().GetWindow().GetWidth();
         auto height = Engine::Application::Get().GetWindow().GetHeight();
 
-        auto bounds = m_CameraController.GetCamera().GetBounds();
+        auto bounds = m_CameraController.GetBounds();
         auto pos = m_CameraController.GetCamera().GetPosition();
         x = (x / width) * bounds.GetWidth() - bounds.GetWidth() * 0.5f;
         y = bounds.GetHeight() * 0.5f - (y / height) * bounds.GetHeight();

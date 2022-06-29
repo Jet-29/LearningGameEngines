@@ -10,36 +10,39 @@ namespace Engine {
         fbSpec.Width = 1280;
         fbSpec.Height = 720;
         m_FrameBuffer = FrameBuffer::Create(fbSpec);
+
+        m_ActiveScene = CreateRef<Scene>();
+
+        auto square = m_ActiveScene->CreateEntity("Square");
+        square.AddComponent<SpriteRendererComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
+        m_SquareEntity = square;
+
+        m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+        m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));
+
+        m_SecondCameraEntity = m_ActiveScene->CreateEntity("Clip-Space Camera Entity");
+        auto& cc = m_SecondCameraEntity.AddComponent<CameraComponent>(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f));
+        cc.Primary = false;
     }
 
     void EditorLayer::OnUpdate(TimeStep dt) {
-        m_CameraController.OnUpdate(dt);
+
+        if (FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
+            m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y)) {
+            m_FrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
+            m_CameraController.ResizeBounds(m_ViewportSize.x, m_ViewportSize.y);
+        }
+
+        if (m_ViewportFocussed) {
+            m_CameraController.OnUpdate(dt);
+        }
         Renderer2D::ResetStats();
 
         m_FrameBuffer->Bind();
         RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
         RenderCommand::Clear();
 
-        static float rotation = 0.0f;
-        rotation += dt * 0.5f;
-
-        Renderer2D::BeginScene(m_CameraController.GetCamera());
-
-        Renderer2D::DrawRotatedQuad({1.0f, 0.0f, -1.0f}, {0.8f, 0.8f}, -0.785f, {0.8f, 0.2f, 0.3f, 1.0f});
-
-        Renderer2D::DrawQuad({-1.0f, 0.0f, -1.0f}, {0.8f, 0.8f}, {0.8f, 0.2f, 0.3f, 1.0f});
-        Renderer2D::DrawQuad({0.5f, -0.5f, -1.0f}, {0.5f, 0.75f}, {0.2f, 0.3f, 0.8f, 1.0f});
-
-        Renderer2D::DrawQuad({0.0f, 0.0f, -1.999f}, {20.0f, 20.0f}, m_CheckerboardTexture, 10.0f);
-        Renderer2D::DrawRotatedQuad({-2.0f, 0.0f, -1.0f}, {0.5f, 0.5f}, rotation, {0.7f, 1.0f, 0.8f, 1.0f}, m_CheckerboardTexture, 20.0f);
-
-        for (float y = -5.0f; y < 5.0f; y += 0.5f) {
-            for (float x = -5.0f; x < 5.0f; x += 0.5f) {
-                glm::vec4 color{(x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.75f};
-                Renderer2D::DrawQuad({x, y, -0.9f}, {0.45f, 0.45f}, color);
-            }
-        }
-        Renderer2D::EndScene();
+        m_ActiveScene->OnUpdate(dt);
 
         m_FrameBuffer->Unbind();
 
@@ -85,17 +88,32 @@ namespace Engine {
         ImGui::Text("Quad count: %d", stats.QuadCount);
         ImGui::Text("Vertex count: %d", stats.GetTotalVertexCount());
         ImGui::Text("Index count: %d", stats.GetTotalIndexCount());
+
+        if (m_SquareEntity) {
+            ImGui::Separator();
+            ImGui::Text("%s", m_SquareEntity.GetComponent<TagComponent>().Tag.c_str());
+            auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
+            ImGui::ColorEdit4("Square color", glm::value_ptr(squareColor));
+        }
+
+        ImGui::DragFloat3("Camera A Transform", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
+        ImGui::DragFloat3("Camera B Transform", glm::value_ptr(m_SecondCameraEntity.GetComponent<TransformComponent>().Transform[3]));
+
+        if (ImGui::Checkbox("Camera toggle", &m_PrimaryCamera)) {
+            m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
+            m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
+        }
+
         ImGui::End();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
         ImGui::Begin("Viewport");
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 
-        if (m_ViewportSize != *((glm::vec2*) &viewportPanelSize)) {
-            m_FrameBuffer->Resize((uint32_t) viewportPanelSize.x, (uint32_t) viewportPanelSize.y);
-            m_ViewportSize = {viewportPanelSize.x, viewportPanelSize.y};
-            m_CameraController.ResizeBounds(viewportPanelSize.x, viewportPanelSize.y);
-        }
+        m_ViewportFocussed = ImGui::IsWindowFocused();
+        m_ViewportHovered = ImGui::IsWindowHovered();
+        Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocussed || !m_ViewportHovered);
+
         uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID();
         ImGui::Image((void*) (uint64_t) textureID, {viewportPanelSize.x, viewportPanelSize.y}, ImVec2(0, 1), ImVec2(1, 0));
         ImGui::End();

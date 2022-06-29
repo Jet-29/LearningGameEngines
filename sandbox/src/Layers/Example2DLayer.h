@@ -2,10 +2,10 @@
 
 #include <Engine.h>
 
-class EditorLayer : public Engine::Layer {
+class Example2DLayer : public Engine::Layer {
 public:
-    EditorLayer() : Engine::Layer("Example 2D"), m_CameraController(1280.0f / 720.0f, true) {}
-    virtual ~EditorLayer() override = default;
+    Example2DLayer() : Engine::Layer("Example 2D"), m_CameraController(1280.0f / 720.0f, true) {}
+    virtual ~Example2DLayer() override = default;
 
     virtual void OnAttach() override;
 

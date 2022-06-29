@@ -25,6 +25,7 @@ set(Includes
         ${PROJECT_SOURCE_DIR}/vendor/imgui
         ${PROJECT_SOURCE_DIR}/vendor/glm
         ${PROJECT_SOURCE_DIR}/vendor/stb_image
+        ${PROJECT_SOURCE_DIR}/vendor/entt
         )
 
 set(Libraries "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/glfw3.lib ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/glad.lib ")

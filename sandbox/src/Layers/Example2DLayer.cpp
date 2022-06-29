@@ -2,11 +2,11 @@
 #include <imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 
-void EditorLayer::OnAttach() {
+void Example2DLayer::OnAttach() {
     m_CheckerboardTexture = Engine::Texture2D::Create("assets/textures/Checkerboard.png");
 }
 
-void EditorLayer::OnUpdate(Engine::TimeStep dt) {
+void Example2DLayer::OnUpdate(Engine::TimeStep dt) {
     m_CameraController.OnUpdate(dt);
     Engine::Renderer2D::ResetStats();
 
@@ -35,7 +35,7 @@ void EditorLayer::OnUpdate(Engine::TimeStep dt) {
     Engine::Renderer2D::EndScene();
 
 }
-void EditorLayer::OnImGuiRender() {
+void Example2DLayer::OnImGuiRender() {
 
     ImGui::Begin("Settings");
 
@@ -49,7 +49,7 @@ void EditorLayer::OnImGuiRender() {
     ImGui::End();
 
 }
-void EditorLayer::OnEvent(Engine::Event& event) {
+void Example2DLayer::OnEvent(Engine::Event& event) {
     m_CameraController.OnEvent(event);
 }
 

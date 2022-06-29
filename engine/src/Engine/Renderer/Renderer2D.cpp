@@ -95,6 +95,17 @@ namespace Engine {
     void Renderer2D::Shutdown() {
         delete[] s_Data.QuadVertexBufferBase;
     }
+    void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform) {
+        glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
+
+        s_Data.TextureShader->Bind();
+        s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+
+        s_Data.QuadIndexCount = 0;
+        s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+        s_Data.TextureSlotIndex = 0;
+    }
     void Renderer2D::BeginScene(const OrthographicCamera& camera) {
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
@@ -155,62 +166,10 @@ namespace Engine {
         DrawQuad(glm::vec3(position, 0.0f), size, color, texture, tilingFactor);
     }
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, const Ref<SubTexture2D>& texture, float tilingFactor) {
-
-        if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices) {
-            FlushAndReset();
-        }
-
-        float textureIndex = 0.0f;
-
-        for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++) {
-            if (*s_Data.TextureSlots[i] == *texture->GetTexture().get()) {
-                textureIndex = (float) i;
-                break;
-            }
-        }
-
-        if (textureIndex == 0.0f) {
-            if (s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots) {
-                FlushAndReset();
-            }
-            textureIndex = (float) s_Data.TextureSlotIndex;
-            s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture->GetTexture();
-            s_Data.TextureSlotIndex++;
-        }
-
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
             glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f));
 
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[0];
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = texture->GetTexCoords()[0];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
-
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[1];
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = texture->GetTexCoords()[1];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
-
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[2];
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = texture->GetTexCoords()[2];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
-
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[3];
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = texture->GetTexCoords()[3];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
-
-        s_Data.QuadIndexCount += 6;
-        s_Data.Stats.QuadCount++;
+        DrawQuad(transform, color, texture, tilingFactor);
     }
     void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color) {
         DrawRotatedQuad(glm::vec3(position, 0.0f), size, rotation, color, s_Data.WhiteTexture);
@@ -241,6 +200,33 @@ namespace Engine {
         DrawRotatedQuad(glm::vec3(position, 0.0f), size, rotation, color, texture, tilingFactor);
     }
     void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color, const Ref<SubTexture2D>& texture, float tilingFactor) {
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+            glm::rotate(glm::mat4(1.0f), rotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
+            glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f));
+
+        DrawQuad(transform, color, texture, tilingFactor);
+    }
+    Renderer2D::Statistics Renderer2D::GetStats() {
+        return s_Data.Stats;
+    }
+    void Renderer2D::ResetStats() {
+        memset(&s_Data.Stats, 0, sizeof(Statistics));
+    }
+    void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color) {
+        DrawQuad(transform, color, s_Data.WhiteTexture);
+    }
+    void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tilingFactor) {
+        auto temp = SubTexture2D::CreateFromCoords(texture, {0.0f, 0.0f}, {texture->GetWidth(), texture->GetHeight()});
+        DrawQuad(transform, glm::vec4(1.0f), temp, tilingFactor);
+    }
+    void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& texture, float tilingFactor) {
+        DrawQuad(transform, glm::vec4(1.0f), texture, tilingFactor);
+    }
+    void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color, const Ref<Texture2D>& texture, float tilingFactor) {
+        auto temp = SubTexture2D::CreateFromCoords(texture, {0.0f, 0.0f}, {texture->GetWidth(), texture->GetHeight()});
+        DrawQuad(transform, color, temp, tilingFactor);
+    }
+    void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color, const Ref<SubTexture2D>& texture, float tilingFactor) {
         if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices) {
             FlushAndReset();
         }
@@ -262,10 +248,6 @@ namespace Engine {
             s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture->GetTexture();
             s_Data.TextureSlotIndex++;
         }
-
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
-            glm::rotate(glm::mat4(1.0f), rotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
-            glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f));
 
         s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[0];
         s_Data.QuadVertexBufferPtr->Color = color;
@@ -297,12 +279,6 @@ namespace Engine {
 
         s_Data.QuadIndexCount += 6;
         s_Data.Stats.QuadCount++;
-    }
-    Renderer2D::Statistics Renderer2D::GetStats() {
-        return s_Data.Stats;
-    }
-    void Renderer2D::ResetStats() {
-        memset(&s_Data.Stats, 0, sizeof(Statistics));
     }
 
 } // Engine
