@@ -18,6 +18,7 @@ set(ENGINE_SOURCE_FILES
         "src/Engine/Renderer/Texture.cpp"
         "src/Engine/Renderer/SubTexture2D.cpp"
         "src/Engine/Renderer/FrameBuffer.cpp"
+        "src/Engine/Renderer/EditorCamera.cpp"
         "src/Engine/Scene/Scene.cpp"
         "src/Engine/Scene/Components.cpp"
         "src/Engine/Scene/Entity.cpp"

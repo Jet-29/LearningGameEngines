@@ -272,4 +272,7 @@ namespace Engine {
         });
 
     }
+    void SceneHierarchyPanel::SetSelectedEntity(Entity entity) {
+        m_SelectionContext = entity;
+    }
 } // Engine

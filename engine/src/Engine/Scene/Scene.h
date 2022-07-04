@@ -2,6 +2,7 @@
 
 #include <entt.hpp>
 #include "Engine/Core/TimeStep.h"
+#include "Engine/Renderer/EditorCamera.h"
 
 namespace Engine {
     class Entity;
@@ -14,7 +15,8 @@ namespace Engine {
         Entity CreateEntity(const std::string& name = std::string());
         void DestroyEntity(Entity entity);
 
-        void OnUpdate(TimeStep dt);
+        void OnUpdateEditor(TimeStep dt, EditorCamera& camera);
+        void OnUpdateRuntime(TimeStep dt);
         void OnViewportResize(uint32_t width, uint32_t height);
 
         Entity GetPrimaryCameraEntity();

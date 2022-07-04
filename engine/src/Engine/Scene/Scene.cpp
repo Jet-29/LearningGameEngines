@@ -22,7 +22,17 @@ namespace Engine {
     void Scene::DestroyEntity(Entity entity) {
         m_Registry.destroy(entity);
     }
-    void Scene::OnUpdate(TimeStep dt) {
+    void Scene::OnUpdateEditor(TimeStep dt, EditorCamera& camera) {
+        Renderer2D::BeginScene(camera);
+        auto spriteGroup = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+        for (auto entity : spriteGroup) {
+            auto [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
+            Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int) entity);
+        }
+        Renderer2D::EndScene();
+    }
+
+    void Scene::OnUpdateRuntime(TimeStep dt) {
 
         m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc) {
             if (!nsc.Instance) {
@@ -50,12 +60,11 @@ namespace Engine {
             auto spriteGroup = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
             for (auto entity : spriteGroup) {
                 auto [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
-                Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+                Renderer2D::DrawSprite(transform.GetTransform(), sprite);
             }
             Renderer2D::EndScene();
         }
     }
-
     void Scene::OnViewportResize(uint32_t width, uint32_t height) {
         m_ViewportWidth = width;
         m_ViewportHeight = height;
@@ -68,6 +77,7 @@ namespace Engine {
             }
         }
     }
+
     Entity Scene::GetPrimaryCameraEntity() {
         auto cameraView = m_Registry.view<CameraComponent>();
         for (auto entity : cameraView) {
@@ -78,7 +88,6 @@ namespace Engine {
         }
         return {};
     }
-
     template<typename T>
     void Scene::OnComponentAdded(Entity entity, T& component) {
 //        static_assert(false);

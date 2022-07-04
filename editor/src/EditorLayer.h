@@ -17,6 +17,7 @@ namespace Engine {
 
     private:
         bool OnKeyPressed(KeyPressedEvent& event);
+        bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
 
         void NewScene();
         void OpenScene();
@@ -28,6 +29,10 @@ namespace Engine {
 
         glm::vec2 m_ViewportSize;
         bool m_ViewportFocussed, m_ViewportHovered;
+        glm::vec2 m_ViewportBounds[2];
+
+        EditorCamera m_EditorCamera;
+        Entity m_HoveredEntity;
 
         SceneHierarchyPanel m_SceneHierarchyPanel;
 
