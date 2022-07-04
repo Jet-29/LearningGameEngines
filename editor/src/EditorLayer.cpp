@@ -3,8 +3,8 @@
 #include "glm/gtc/type_ptr.hpp"
 
 namespace Engine {
+
     void EditorLayer::OnAttach() {
-        m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 
         FrameBufferSpecification fbSpec;
         fbSpec.Width = 1280;
@@ -15,14 +15,45 @@ namespace Engine {
 
         auto square = m_ActiveScene->CreateEntity("Square");
         square.AddComponent<SpriteRendererComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
-        m_SquareEntity = square;
 
-        m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
-        m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));
+        auto resSquare = m_ActiveScene->CreateEntity("My Red Square Square");
+        resSquare.AddComponent<SpriteRendererComponent>(glm::vec4{1.0f, 0.0f, 0.0f, 1.0f});
 
-        m_SecondCameraEntity = m_ActiveScene->CreateEntity("Clip-Space Camera Entity");
-        auto& cc = m_SecondCameraEntity.AddComponent<CameraComponent>(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f));
-        cc.Primary = false;
+        auto mainCamera = m_ActiveScene->CreateEntity("Main Camera");
+        mainCamera.AddComponent<CameraComponent>();
+
+        auto secondCamera = m_ActiveScene->CreateEntity("Second Camera");
+        secondCamera.AddComponent<CameraComponent>().Primary = false;
+
+        class CameraController : public ScriptableEntity {
+        public:
+            void OnCreate() {
+
+            }
+            void OnDestroy() {
+
+            }
+            void OnUpdate(TimeStep dt) {
+                auto& trans = GetComponent<TransformComponent>().Translation;
+                float speed = 5.0f;
+                if (Input::IsKeyPressed(Key::A)) {
+                    trans.x -= speed * dt;
+                }
+                if (Input::IsKeyPressed(Key::D)) {
+                    trans.x += speed * dt;
+                }
+                if (Input::IsKeyPressed(Key::W)) {
+                    trans.y += speed * dt;
+                }
+                if (Input::IsKeyPressed(Key::S)) {
+                    trans.y -= speed * dt;
+                }
+            }
+        };
+
+        secondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
 
     void EditorLayer::OnUpdate(TimeStep dt) {
@@ -30,12 +61,10 @@ namespace Engine {
         if (FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
             m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y)) {
             m_FrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
-            m_CameraController.ResizeBounds(m_ViewportSize.x, m_ViewportSize.y);
+
+            m_ActiveScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
         }
 
-        if (m_ViewportFocussed) {
-            m_CameraController.OnUpdate(dt);
-        }
         Renderer2D::ResetStats();
 
         m_FrameBuffer->Bind();
@@ -81,38 +110,26 @@ namespace Engine {
             ImGui::EndMenuBar();
         }
 
-        ImGui::Begin("Settings");
+        m_SceneHierarchyPanel.OnImGuiRender();
+
+        ImGui::Begin("Renderer stats");
         auto stats = Renderer2D::GetStats();
         ImGui::Text("Renderer2D Stats:");
         ImGui::Text("Draw calls: %d", stats.DrawCalls);
         ImGui::Text("Quad count: %d", stats.QuadCount);
         ImGui::Text("Vertex count: %d", stats.GetTotalVertexCount());
         ImGui::Text("Index count: %d", stats.GetTotalIndexCount());
-
-        if (m_SquareEntity) {
-            ImGui::Separator();
-            ImGui::Text("%s", m_SquareEntity.GetComponent<TagComponent>().Tag.c_str());
-            auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
-            ImGui::ColorEdit4("Square color", glm::value_ptr(squareColor));
-        }
-
-        ImGui::DragFloat3("Camera A Transform", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
-        ImGui::DragFloat3("Camera B Transform", glm::value_ptr(m_SecondCameraEntity.GetComponent<TransformComponent>().Transform[3]));
-
-        if (ImGui::Checkbox("Camera toggle", &m_PrimaryCamera)) {
-            m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
-            m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
-        }
-
         ImGui::End();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
         ImGui::Begin("Viewport");
-        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 
         m_ViewportFocussed = ImGui::IsWindowFocused();
         m_ViewportHovered = ImGui::IsWindowHovered();
         Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocussed || !m_ViewportHovered);
+
+        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+        m_ViewportSize = {viewportPanelSize.x, viewportPanelSize.y};
 
         uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID();
         ImGui::Image((void*) (uint64_t) textureID, {viewportPanelSize.x, viewportPanelSize.y}, ImVec2(0, 1), ImVec2(1, 0));
@@ -122,7 +139,7 @@ namespace Engine {
         ImGui::End();
     }
     void EditorLayer::OnEvent(Event& event) {
-        m_CameraController.OnEvent(event);
+
     }
 
 }

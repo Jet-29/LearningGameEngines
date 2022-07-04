@@ -21,6 +21,8 @@ set(ENGINE_SOURCE_FILES
         "src/Engine/Scene/Scene.cpp"
         "src/Engine/Scene/Components.cpp"
         "src/Engine/Scene/Entity.cpp"
+        "src/Engine/Scene/ScriptableEntity.cpp"
+        "src/Engine/Scene/SceneCamera.cpp"
         )
 
 Set(OPENGL_SOURCE_FILES
