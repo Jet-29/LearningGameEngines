@@ -16,6 +16,12 @@ namespace Engine {
         virtual void OnEvent(Event& event) override;
 
     private:
+        bool OnKeyPressed(KeyPressedEvent& event);
+
+        void NewScene();
+        void OpenScene();
+        void SaveSceneAs();
+
         Ref<FrameBuffer> m_FrameBuffer;
 
         Ref<Scene> m_ActiveScene;
@@ -24,5 +30,7 @@ namespace Engine {
         bool m_ViewportFocussed, m_ViewportHovered;
 
         SceneHierarchyPanel m_SceneHierarchyPanel;
+
+        int m_GizmoType = -1;
     };
 }

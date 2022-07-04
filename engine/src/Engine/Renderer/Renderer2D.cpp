@@ -87,10 +87,10 @@ namespace Engine {
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetIntArray("u_Texture", samplers, Engine::Renderer2DData::MaxTextureSlots);
 
-        s_Data.QuadVertexPositions[0] = {-0.5f, -0.5f, 1.0f, 1.0f};
-        s_Data.QuadVertexPositions[1] = {0.5f, -0.5f, 1.0f, 1.0f};
-        s_Data.QuadVertexPositions[2] = {0.5f, 0.5f, 1.0f, 1.0f};
-        s_Data.QuadVertexPositions[3] = {-0.5f, 0.5f, 1.0f, 1.0f};
+        s_Data.QuadVertexPositions[0] = {-0.5f, -0.5f, 0.0f, 1.0f};
+        s_Data.QuadVertexPositions[1] = {0.5f, -0.5f, 0.0f, 1.0f};
+        s_Data.QuadVertexPositions[2] = {0.5f, 0.5f, 0.0f, 1.0f};
+        s_Data.QuadVertexPositions[3] = {-0.5f, 0.5f, 0.0f, 1.0f};
     }
     void Renderer2D::Shutdown() {
         delete[] s_Data.QuadVertexBufferBase;

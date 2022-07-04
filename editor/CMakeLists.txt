@@ -15,6 +15,7 @@ set(Includes
         ${CMAKE_SOURCE_DIR}/engine/vendor/imgui
         ${CMAKE_SOURCE_DIR}/engine/vendor/glm
         ${CMAKE_SOURCE_DIR}/engine/vendor/entt
+        ${CMAKE_SOURCE_DIR}/engine/vendor/ImGuizmo
         )
 
 

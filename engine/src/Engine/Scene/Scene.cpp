@@ -68,6 +68,16 @@ namespace Engine {
             }
         }
     }
+    Entity Scene::GetPrimaryCameraEntity() {
+        auto cameraView = m_Registry.view<CameraComponent>();
+        for (auto entity : cameraView) {
+            auto& camera = cameraView.get<CameraComponent>(entity);
+            if (camera.Primary) {
+                return {entity, this};
+            }
+        }
+        return {};
+    }
 
     template<typename T>
     void Scene::OnComponentAdded(Entity entity, T& component) {

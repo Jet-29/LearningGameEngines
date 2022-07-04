@@ -10,3 +10,9 @@
 [submodule "engine/vendor/glm"]
 	path = engine/vendor/glm
 	url = https://github.com/g-truc/glm
+[submodule "engine/vendor/yaml-cpp"]
+	path = engine/vendor/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp
+[submodule "engine/vendor/ImGuizmo"]
+	path = engine/vendor/ImGuizmo
+	url = https://github.com/CedricGuillemet/ImGuizmo

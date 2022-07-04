@@ -23,6 +23,8 @@ set(ENGINE_SOURCE_FILES
         "src/Engine/Scene/Entity.cpp"
         "src/Engine/Scene/ScriptableEntity.cpp"
         "src/Engine/Scene/SceneCamera.cpp"
+        "src/Engine/Scene/SceneSerializer.cpp"
+        "src/Engine/Math/Math.cpp"
         )
 
 Set(OPENGL_SOURCE_FILES
@@ -38,6 +40,7 @@ Set(OPENGL_SOURCE_FILES
 Set(WINDOWS_SOURCE_FILES
         "src/Platforms/Windows/WindowsWindow.cpp"
         "src/Platforms/Windows/WindowsInput.cpp"
+        "src/Platforms/Windows/WindowsPlatformUtils.cpp"
         )
 
 Set(PLATFORM_SOURCE
@@ -61,9 +64,19 @@ set(STB_SOURCE_FILES
         "vendor/stb_image/stb_image.cpp"
         )
 
+set(IMGUIZMO_SOURCE_FILES
+        "vendor/ImGuizmo/ImGuizmo.cpp"
+        "vendor/ImGuizmo/ImCurveEdit.cpp"
+        "vendor/ImGuizmo/ImGradient.cpp"
+        "vendor/ImGuizmo/ImSequencer.cpp"
+        "vendor/ImGuizmo/GraphEditor.cpp"
+        )
+
+
 Set(ALL_SOURCE_FILES
         ${ENGINE_SOURCE_FILES}
         ${PLATFORM_SOURCE}
         ${IMGUI_SOURCE_FILES}
         ${STB_SOURCE_FILES}
+        ${IMGUIZMO_SOURCE_FILES}
         )
