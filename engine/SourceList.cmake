@@ -27,6 +27,7 @@ set(ENGINE_SOURCE_FILES
         "src/Engine/Scene/SceneCamera.cpp"
         "src/Engine/Scene/SceneSerializer.cpp"
         "src/Engine/Math/Math.cpp"
+        "src/Engine/Core/UUID.cpp"
         )
 
 Set(OPENGL_SOURCE_FILES

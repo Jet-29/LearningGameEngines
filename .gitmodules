@@ -22,3 +22,6 @@
 [submodule "engine/vendor/SPIRV-Cross"]
 	path = engine/vendor/SPIRV-Cross
 	url = https://github.com/KhronosGroup/SPIRV-Cross
+[submodule "engine/vendor/Box2D"]
+	path = engine/vendor/Box2D
+	url = https://github.com/erincatto/box2d

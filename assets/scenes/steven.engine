@@ -1,15 +1,6 @@
 Scene: Untitled
 Entities:
-  - Entity: 12837
-    TagComponent:
-      Tag: steven
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [1, 0, 1, 1]
-  - Entity: 12837
+  - Entity: 8786885893909594430
     TagComponent:
       Tag: stevens webcam
     TransformComponent:
@@ -27,3 +18,13 @@ Entities:
         OrthographicFar: 1
       Primary: true
       FixedAspectRatio: false
+  - Entity: 13803414303537200603
+    TagComponent:
+      Tag: steven
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 0, 1, 1]
+      TilingFactor: 1

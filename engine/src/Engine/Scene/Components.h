@@ -4,11 +4,15 @@
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Scene/SceneCamera.h"
 #include "Engine/Core/TimeStep.h"
-#include "ScriptableEntity.h"
+#include "Engine/Core/UUID.h"
 
 #include <glm/gtx/quaternion.hpp>
 
 namespace Engine {
+
+    struct IDComponent {
+        UUID ID;
+    };
 
     struct TagComponent {
         std::string Tag;
@@ -58,6 +62,26 @@ namespace Engine {
 
         }
 
+    };
+
+    struct Rigidbody2DComponent {
+        enum class BodyType { Static, Dynamic, Kinematic };
+        BodyType Type = BodyType::Static;
+        bool FixedRotation = false;
+
+        void* RuntimeBody = nullptr;
+    };
+
+    struct BoxCollider2DComponent {
+        glm::vec2 Offset{0.0f};
+        glm::vec2 Size{0.5f};
+
+        float Density = 1.0f;
+        float Friction = 0.5f;
+        float Restitution = 0.0f;
+        float RestitutionThreshold = 0.5f;
+
+        void* RuntimeFixture = nullptr;
     };
 
 } // Engine

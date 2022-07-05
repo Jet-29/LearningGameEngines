@@ -29,10 +29,14 @@ add_subdirectory(vendor/shaderc)
 
 add_subdirectory(vendor/SPIRV-Cross)
 
+set(BOX2D_BUILD_UNIT_TESTS OFF)
+set(BOX2D_BUILD_TESTBED OFF)
+add_subdirectory(vendor/Box2D)
+
 #set(VULKAN_DIR "C:/VulkanSDK/1.3.216.0")
 #find_package(Vulkan REQUIRED)
 
-add_dependencies(${PROJECT_NAME} glfw spdlog glad yaml-cpp shaderc spirv-cross-core spirv-cross-glsl)
+add_dependencies(${PROJECT_NAME} glfw spdlog glad yaml-cpp shaderc spirv-cross-core spirv-cross-glsl box2d)
 
 set(Includes
         ${PROJECT_SOURCE_DIR}/src
@@ -48,6 +52,7 @@ set(Includes
         ${PROJECT_SOURCE_DIR}/vendor/ImGuizmo
         ${PROJECT_SOURCE_DIR}/vendor/shaderc/libshaderc/include
         ${PROJECT_SOURCE_DIR}/vendor/SPIRV-Cross
+        ${PROJECT_SOURCE_DIR}/vendor/Box2D/include
         )
 
 set(Libraries "${Libraries} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/glfw3.lib")
@@ -66,6 +71,7 @@ set(Libraries "${Libraries} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/OSDependent${DEBUG
 set(Libraries "${Libraries} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/SPIRV-Tools.lib")
 set(Libraries "${Libraries} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/SPIRV-Tools-opt.lib")
 set(Libraries "${Libraries} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/SPIRV${DEBUG_SUFFIX}.lib")
+set(Libraries "${Libraries} ${CMAKE_CURRENT_BINARY_DIR}/vendor/Box2D/bin/box2d.lib")
 
 set(CMAKE_STATIC_LINKER_FLAGS ${Libraries})
 
