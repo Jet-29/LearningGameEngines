@@ -51,6 +51,8 @@ namespace Engine {
 
         static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID = -1);
 
+        static void DrawCircle(const glm::mat4& transform, CircleRendererComponent component, int entityID = -1);
+
         struct Statistics {
             uint32_t DrawCalls = 0;
             uint32_t QuadCount = 0;

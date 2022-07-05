@@ -38,6 +38,12 @@ namespace Engine {
         float TilingFactor = 1.0f;
     };
 
+    struct CircleRendererComponent {
+        glm::vec4 Color{1.0f};
+        float Thickness = 1.0f;
+        float Fade = 0.005f;
+    };
+
     struct CameraComponent {
         SceneCamera Camera;
         bool Primary = true;

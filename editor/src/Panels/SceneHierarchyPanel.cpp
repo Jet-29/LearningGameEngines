@@ -204,6 +204,13 @@ namespace Engine {
                 }
             }
 
+            if (!m_SelectionContext.HasComponent<CircleRendererComponent>()) {
+                if (ImGui::MenuItem("Circle Renderer")) {
+                    m_SelectionContext.AddComponent<CircleRendererComponent>();
+                    ImGui::CloseCurrentPopup();
+                }
+            }
+
             if (!m_SelectionContext.HasComponent<Rigidbody2DComponent>()) {
                 if (ImGui::MenuItem("Rigidbody 2D")) {
                     m_SelectionContext.AddComponent<Rigidbody2DComponent>();
@@ -302,6 +309,12 @@ namespace Engine {
             }
 
             ImGui::DragFloat("TilingFactor", &component.TilingFactor, 0.1f);
+        });
+
+        DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](CircleRendererComponent& component) {
+            ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+            ImGui::DragFloat("Thickness", &component.Thickness, 0.01f, 0.0f, 1.0f);
+            ImGui::DragFloat("Fade", &component.Fade, 0.001f, 0.0f, 1.0f);
         });
 
         DrawComponent<Rigidbody2DComponent>("Rigidbody 2D", entity, [](Rigidbody2DComponent& component) {
