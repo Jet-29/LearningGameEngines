@@ -11,7 +11,12 @@
 
 namespace Engine {
 
+    extern const std::filesystem::path g_AssetPath;
+
     void EditorLayer::OnAttach() {
+
+        m_PlayIcon = Texture2D::Create("assets/Resources/Icons/PlayButton.png");
+        m_StopIcon = Texture2D::Create("assets/Resources/Icons/StopButton.png");
 
         FrameBufferSpecification fbSpec;
         fbSpec.Attachments = {FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::Depth};
@@ -43,8 +48,6 @@ namespace Engine {
             m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
         }
 
-        m_EditorCamera.OnUpdate(dt);
-
         Renderer2D::ResetStats();
 
         m_FrameBuffer->Bind();
@@ -52,7 +55,17 @@ namespace Engine {
         RenderCommand::Clear();
         m_FrameBuffer->ClearAttachment(1, -1);
 
-        m_ActiveScene->OnUpdateEditor(dt, m_EditorCamera);
+        switch (m_SceneState) {
+            case SceneState::Edit: {
+                m_EditorCamera.OnUpdate(dt);
+                m_ActiveScene->OnUpdateEditor(dt, m_EditorCamera);
+                break;
+            }
+            case SceneState::Play: {
+                m_ActiveScene->OnUpdateRuntime(dt);
+                break;
+            }
+        }
 
         auto [mx, my] = ImGui::GetMousePos();
         mx -= m_ViewportBounds[0].x;
@@ -121,6 +134,7 @@ namespace Engine {
         }
 
         m_SceneHierarchyPanel.OnImGuiRender();
+        m_ContentBrowserPanel.OnImGuiRender();
 
         ImGui::Begin("Renderer stats");
         std::string name = "None";
@@ -156,6 +170,14 @@ namespace Engine {
         uint64_t textureID = m_FrameBuffer->GetColorAttachmentRendererID(0);
         ImGui::Image((void*) textureID, {viewportPanelSize.x, viewportPanelSize.y}, ImVec2(0, 1), ImVec2(1, 0));
 
+        if (ImGui::BeginDragDropTarget()) {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) {
+                const auto* path = (const wchar_t*) payload->Data;
+                OpenScene(std::filesystem::path(g_AssetPath) / path);
+            }
+            ImGui::EndDragDropTarget();
+        }
+
         Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
         if (selectedEntity && m_GizmoType != -1) {
             ImGuizmo::SetOrthographic(false);
@@ -163,11 +185,6 @@ namespace Engine {
             auto windowWidth = (float) ImGui::GetWindowWidth();
             auto windowHeight = (float) ImGui::GetWindowHeight();
             ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
-
-//            auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-//            const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
-//            const glm::mat4& cameraProjection = camera.GetProjection();
-//            glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
 
             const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
             glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
@@ -198,6 +215,8 @@ namespace Engine {
 
         ImGui::End();
         ImGui::PopStyleVar();
+
+        UI_Toolbar();
 
         ImGui::End();
     }
@@ -248,11 +267,13 @@ namespace Engine {
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
     void EditorLayer::OpenScene() {
-        std::string filepath = FileDialogs::OpenFile("Engine Scene (*.engine)\0*.engine\0");
-        if (!filepath.empty()) {
+        OpenScene(FileDialogs::OpenFile("Engine Scene (*.engine)\0*.engine\0"));
+    }
+    void EditorLayer::OpenScene(const std::filesystem::path& path) {
+        if (!path.empty()) {
             NewScene();
             SceneSerializer serializer(m_ActiveScene);
-            serializer.Deserialize(filepath);
+            serializer.Deserialize(path.string());
         }
     }
     void EditorLayer::SaveSceneAs() {
@@ -267,5 +288,38 @@ namespace Engine {
             m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
         }
         return false;
+    }
+    void EditorLayer::UI_Toolbar() {
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+        auto& colors = ImGui::GetStyle().Colors;
+        const auto& buttonHovered = colors[ImGuiCol_ButtonHovered];
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
+        const auto& buttonActive = colors[ImGuiCol_ButtonActive];
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
+
+        ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+        float size = ImGui::GetWindowHeight() - 4.0f;
+        ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+        Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_PlayIcon : m_StopIcon;
+        if (ImGui::ImageButton((ImTextureID) (uint64_t) icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0)) {
+            if (m_SceneState == SceneState::Edit)
+                OnScenePlay();
+            else if (m_SceneState == SceneState::Play)
+                OnSceneStop();
+        }
+
+        ImGui::PopStyleColor(3);
+        ImGui::PopStyleVar(2);
+
+        ImGui::End();
+    }
+    void EditorLayer::OnScenePlay() {
+        m_SceneState = SceneState::Play;
+    }
+    void EditorLayer::OnSceneStop() {
+        m_SceneState = SceneState::Edit;
     }
 }

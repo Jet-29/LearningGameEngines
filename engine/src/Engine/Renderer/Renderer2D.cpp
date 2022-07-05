@@ -94,7 +94,7 @@ namespace Engine {
             samplers[i] = i;
         }
 
-        s_Data.TextureShader = Shader::Create("assets/shaders/Texture.glsl");
+        s_Data.TextureShader = Shader::Create("assets/shaders/Renderer2D-Quad.glsl");
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetIntArray("u_Texture", samplers, Engine::Renderer2DData::MaxTextureSlots);
 
@@ -300,7 +300,10 @@ namespace Engine {
         s_Data.Stats.QuadCount++;
     }
     void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID) {
-        DrawQuad(transform, src.Color, entityID);
+        if (src.Texture)
+            DrawQuad(transform, src.Color, src.Texture, src.TilingFactor, entityID);
+        else
+            DrawQuad(transform, src.Color, entityID);
     }
 
 } // Engine

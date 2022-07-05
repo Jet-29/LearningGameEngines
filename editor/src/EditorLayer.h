@@ -2,6 +2,7 @@
 
 #include "Engine.h"
 #include "Panels/SceneHierarchyPanel.h"
+#include "Panels/ContentBrowserPanel.h"
 
 namespace Engine {
     class EditorLayer : public Layer {
@@ -21,7 +22,13 @@ namespace Engine {
 
         void NewScene();
         void OpenScene();
+        void OpenScene(const std::filesystem::path& path);
         void SaveSceneAs();
+
+        void OnScenePlay();
+        void OnSceneStop();
+
+        void UI_Toolbar();
 
         Ref<FrameBuffer> m_FrameBuffer;
 
@@ -34,8 +41,18 @@ namespace Engine {
         EditorCamera m_EditorCamera;
         Entity m_HoveredEntity;
 
+        Ref<Texture2D> m_PlayIcon;
+        Ref<Texture2D> m_StopIcon;
+
         SceneHierarchyPanel m_SceneHierarchyPanel;
+        ContentBrowserPanel m_ContentBrowserPanel;
 
         int m_GizmoType = -1;
+
+        enum class SceneState {
+            Edit,
+            Play
+        };
+        SceneState m_SceneState = SceneState::Edit;
     };
 }
