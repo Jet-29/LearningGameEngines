@@ -112,6 +112,7 @@ namespace Engine {
                 Renderer2D::DrawCircle(transform.GetTransform(), circle, (int) entity);
             }
         }
+
         Renderer2D::EndScene();
     }
 
