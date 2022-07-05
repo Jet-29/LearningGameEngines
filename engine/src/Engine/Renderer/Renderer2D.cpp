@@ -400,14 +400,10 @@ namespace Engine {
         else
             DrawQuad(transform, src.Color, entityID);
     }
-    void Renderer2D::DrawCircle(const glm::mat4& transform, CircleRendererComponent component, int entityID) {
+    void Renderer2D::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness, float fade, int entityID) {
         if (s_Data.CircleIndexCount >= Renderer2DData::MaxIndices) {
             NextBatch();
         }
-
-        auto color = component.Color;
-        auto thickness = component.Thickness;
-        auto fade = component.Fade;
 
         for (size_t i = 0; i < 4; i++) {
             s_Data.CircleVertexBufferPtr->WorldPosition = transform * s_Data.QuadVertexPositions[i];

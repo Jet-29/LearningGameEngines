@@ -19,6 +19,7 @@ namespace Engine {
     private:
         bool OnKeyPressed(KeyPressedEvent& event);
         bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
+        void OnOverlayRender();
 
         void NewScene();
         void OpenScene();
@@ -55,6 +56,8 @@ namespace Engine {
         ContentBrowserPanel m_ContentBrowserPanel;
 
         int m_GizmoType = -1;
+
+        bool m_ShowPhysicsColliders = false;
 
         enum class SceneState {
             Edit,
