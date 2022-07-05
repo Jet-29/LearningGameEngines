@@ -31,6 +31,7 @@ namespace Engine {
 
         void OnScenePlay();
         void OnSceneStop();
+        void OnSceneSimulate();
 
         void OnDuplicateEntity();
 
@@ -50,6 +51,7 @@ namespace Engine {
         Entity m_HoveredEntity;
 
         Ref<Texture2D> m_PlayIcon;
+        Ref<Texture2D> m_SimulateIcon;
         Ref<Texture2D> m_StopIcon;
 
         SceneHierarchyPanel m_SceneHierarchyPanel;
@@ -61,7 +63,8 @@ namespace Engine {
 
         enum class SceneState {
             Edit,
-            Play
+            Play,
+            Simulate
         };
         SceneState m_SceneState = SceneState::Edit;
     };
