@@ -8,9 +8,26 @@
 #include "Engine/Core/TimeStep.h"
 
 namespace Engine {
+
+    struct ApplicationCommandLineArgs {
+        int Count = 0;
+        char** Args = nullptr;
+
+        const char* operator[](int index) const {
+            ENGINE_CORE_ASSERT(index < Count);
+            return Args[index];
+        }
+    };
+
+    struct ApplicationSpecification {
+        std::string Name = "Engine Application";
+        std::string WorkingDirectory;
+        ApplicationCommandLineArgs CommandLineArgs;
+    };
+
     class ENGINE_API Application {
     public:
-        Application(const std::string& name = "Engine App");
+        Application(const ApplicationSpecification& specification);
         virtual ~Application() = default;
 
         void Run();
@@ -26,11 +43,13 @@ namespace Engine {
         ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
         inline static Application& Get() { return *s_Instance; }
+        const ApplicationSpecification& GetSpecification() const { return m_Specification; }
 
     private:
         bool OnWindowClose(WindowCloseEvent& e);
         bool OnWindowResize(WindowResizeEvent& e);
 
+        ApplicationSpecification m_Specification;
         std::unique_ptr<Window> m_Window;
         ImGuiLayer* m_ImGuiLayer;
         bool m_Running = true;
@@ -42,6 +61,6 @@ namespace Engine {
     };
 
     // to define in client
-    Application* CreateApplication();
+    Application* CreateApplication(ApplicationCommandLineArgs args);
 
 } // Engine

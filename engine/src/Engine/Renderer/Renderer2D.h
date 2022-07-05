@@ -18,6 +18,8 @@ namespace Engine {
         static void BeginScene(const Camera& camera, const glm::mat4& transform);
         static void EndScene();
         static void Flush();
+        static void StartBatch();
+        static void NextBatch();
 
         static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
         static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
@@ -60,8 +62,6 @@ namespace Engine {
         static Statistics GetStats();
         static void ResetStats();
 
-    private:
-        static void FlushAndReset();
     };
 
 } // Engine

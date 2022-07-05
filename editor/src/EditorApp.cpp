@@ -6,12 +6,16 @@
 namespace Engine {
     class EditorApp : public Application {
     public:
-        EditorApp() : Application("Editor") {
+        EditorApp(const ApplicationSpecification& spec) : Application(spec) {
             PushLayer(new EditorLayer());
         }
     };
 
-    Application* CreateApplication() {
-        return new EditorApp();
+    Application* CreateApplication(ApplicationCommandLineArgs args) {
+        ApplicationSpecification spec;
+        spec.Name = "Hazelnut";
+        spec.CommandLineArgs = args;
+
+        return new EditorApp(spec);
     }
 }

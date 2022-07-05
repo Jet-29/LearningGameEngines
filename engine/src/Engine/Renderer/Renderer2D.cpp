@@ -3,6 +3,8 @@
 #include "Shader.h"
 #include "VertexArray.h"
 #include "RenderCommand.h"
+#include "Engine/Renderer/UniformBuffer.h"
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Engine {
 
@@ -37,6 +39,12 @@ namespace Engine {
         glm::vec4 QuadVertexPositions[4];
 
         Renderer2D::Statistics Stats;
+
+        struct CameraData {
+            glm::mat4 ViewProjection;
+        };
+        CameraData CameraBuffer;
+        Ref<UniformBuffer> CameraUniformBuffer;
     };
 
     static Renderer2DData s_Data;
@@ -94,38 +102,29 @@ namespace Engine {
         s_Data.QuadVertexPositions[1] = {0.5f, -0.5f, 0.0f, 1.0f};
         s_Data.QuadVertexPositions[2] = {0.5f, 0.5f, 0.0f, 1.0f};
         s_Data.QuadVertexPositions[3] = {-0.5f, 0.5f, 0.0f, 1.0f};
+
+        s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(Renderer2DData::CameraData), 0);
     }
     void Renderer2D::Shutdown() {
         delete[] s_Data.QuadVertexBufferBase;
     }
     void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform) {
-        glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
+        s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
+        s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
-        s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
-
-        s_Data.QuadIndexCount = 0;
-        s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-
-        s_Data.TextureSlotIndex = 0;
+        StartBatch();
     }
     void Renderer2D::BeginScene(const EditorCamera& camera) {
-        s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjection());
+        s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
+        s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
-        s_Data.QuadIndexCount = 0;
-        s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-
-        s_Data.TextureSlotIndex = 0;
+        StartBatch();
     }
     void Renderer2D::BeginScene(const OrthographicCamera& camera) {
-        s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+        s_Data.CameraBuffer.ViewProjection = camera.GetViewProjectionMatrix();
+        s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
-        s_Data.QuadIndexCount = 0;
-        s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-
-        s_Data.TextureSlotIndex = 0;
+        StartBatch();
     }
     void Renderer2D::EndScene() {
 
@@ -134,21 +133,25 @@ namespace Engine {
 
         Flush();
     }
-    void Renderer2D::Flush() {
-        for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++) {
-            s_Data.TextureSlots[i]->Bind(i);
-        }
-        RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
-        s_Data.Stats.DrawCalls++;
-    }
-    void Renderer2D::FlushAndReset() {
-        EndScene();
-
+    void Renderer2D::StartBatch() {
         s_Data.QuadIndexCount = 0;
         s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
 
         s_Data.TextureSlotIndex = 0;
     }
+    void Renderer2D::NextBatch() {
+        Flush();
+        StartBatch();
+    }
+    void Renderer2D::Flush() {
+        for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++) {
+            s_Data.TextureSlots[i]->Bind(i);
+        }
+        s_Data.TextureShader->Bind();
+        RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
+        s_Data.Stats.DrawCalls++;
+    }
+
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color) {
         DrawQuad(glm::vec3(position, 0.0f), size, color, s_Data.WhiteTexture);
     }
@@ -240,7 +243,7 @@ namespace Engine {
     }
     void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color, const Ref<SubTexture2D>& texture, float tilingFactor, int entityID) {
         if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices) {
-            FlushAndReset();
+            NextBatch();
         }
 
         float textureIndex = 0.0f;
@@ -254,7 +257,7 @@ namespace Engine {
 
         if (textureIndex == 0.0f) {
             if (s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots) {
-                FlushAndReset();
+                NextBatch();
             }
             textureIndex = (float) s_Data.TextureSlotIndex;
             s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture->GetTexture();

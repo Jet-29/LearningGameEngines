@@ -7,11 +7,14 @@ namespace Engine {
 
     Application* Application::s_Instance = nullptr;
 
-    Application::Application(const std::string& name) {
+    Application::Application(const ApplicationSpecification& specification) : m_Specification(specification) {
         ENGINE_CORE_ASSERT(!s_Instance, "Application already exists!")
         s_Instance = this;
 
-        m_Window = std::unique_ptr<Window>(Window::Create(Window::WindowProps(name)));
+        if (!m_Specification.WorkingDirectory.empty())
+            std::filesystem::current_path(m_Specification.WorkingDirectory);
+
+        m_Window = std::unique_ptr<Window>(Window::Create(Window::WindowProps(m_Specification.Name)));
         m_Window->SetEventCallback(ENGINE_BIND_EVENT_FN(OnEvent));
 
         Renderer::Init();

@@ -19,6 +19,7 @@ set(ENGINE_SOURCE_FILES
         "src/Engine/Renderer/SubTexture2D.cpp"
         "src/Engine/Renderer/FrameBuffer.cpp"
         "src/Engine/Renderer/EditorCamera.cpp"
+        "src/Engine/Renderer/UniformBuffer.cpp"
         "src/Engine/Scene/Scene.cpp"
         "src/Engine/Scene/Components.cpp"
         "src/Engine/Scene/Entity.cpp"
@@ -36,6 +37,7 @@ Set(OPENGL_SOURCE_FILES
         "src/Platforms/OpenGL/OpenGLShader.cpp"
         "src/Platforms/OpenGL/OpenGLTexture.cpp"
         "src/Platforms/OpenGL/OpenGLFrameBuffer.cpp"
+        "src/Platforms/OpenGL/OpenGLUniformBuffer.cpp"
         )
 
 Set(WINDOWS_SOURCE_FILES
